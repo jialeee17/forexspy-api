@@ -4,22 +4,32 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class TelegramUser extends Model
+class MTAccount extends Model
 {
     use HasFactory;
+
     use SoftDeletes;
 
+    protected $table = 'mt_accounts';
+
     protected $fillable = [
-        'uuid',
-        'user_uuid',
-        'telegraph_chat_id',
-        'first_name',
-        'last_name',
-        'language_code'
+        'login_id',
+        'telegram_user_uuid',
+        'name',
+        'currency',
+        'balance',
+        'equity',
+        'margin_level',
+        'highest_drawdown_amount',
+        'highest_drawdown_percentage',
+        'floating',
+        'active_pairs',
+        'active_orders',
+        'profit_today',
+        'profit_all_time',
     ];
 
     protected $casts = [
@@ -31,13 +41,8 @@ class TelegramUser extends Model
     /* -------------------------------------------------------------------------- */
     /*                                Relationship                                */
     /* -------------------------------------------------------------------------- */
-    public function accounts(): HasMany
+    public function user(): BelongsTo
     {
-        return $this->hasMany(MTAccount::class, 'telegram_user_uuid', 'uuid');
-    }
-
-    public function chat(): BelongsTo
-    {
-        return $this->belongsTo(TelegraphChat::class, 'telegraph_chat_id');
+        return $this->belongsTo(TelegramUser::class, 'telegram_user_uuid', 'uuid');
     }
 }

@@ -35,6 +35,26 @@ return [
 
     'connections' => [
 
+        'forexspy_data' => [
+            'driver' => 'mysql',
+            'url' => env('DATABASE_URL_FOREXSPY_DATA'),
+            'host' => env('DB_HOST_FOREXSPY_DATA', '127.0.0.1'),
+            'port' => env('DB_PORT_FOREXSPY_DATA', '3306'),
+            'database' => env('DB_DATABASE_FOREXSPY_DATA', 'forge'),
+            'username' => env('DB_USERNAME_FOREXSPY_DATA', 'forge'),
+            'password' => env('DB_PASSWORD_FOREXSPY_DATA', ''),
+            'unix_socket' => env('DB_SOCKET_FOREXSPY_DATA', ''),
+            'charset' => 'utf8mb4',
+            'collation' => 'utf8mb4_unicode_ci',
+            'prefix' => '',
+            'prefix_indexes' => true,
+            'strict' => true,
+            'engine' => null,
+            'options' => extension_loaded('pdo_mysql') ? array_filter([
+                PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
+            ]) : [],
+        ],
+
         'sqlite' => [
             'driver' => 'sqlite',
             'url' => env('DATABASE_URL'),

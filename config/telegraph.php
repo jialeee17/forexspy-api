@@ -29,7 +29,7 @@ return [
      *
      * For reference, see https://core.telegram.org/bots/api#using-a-local-bot-api-server
      */
-    'custom_webhook_domain' => env('TELEGRAM_WEBHOOK_URL', 'http://my.custom.domain'),
+    'custom_webhook_domain' => env('TELEGRAM_WEBHOOK_URL', 'https://api.forexspy.pro'),
 
     /*
      * If enabled, Telegraph dumps received

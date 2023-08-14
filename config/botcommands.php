@@ -6,15 +6,15 @@ return [
      * command_category' => ['command_name' => 'command_description']
      */
     'main' => [
-        'newuser' => 'Create a new user',
+        'newuser' => 'Register a new user',
     ],
     'user' => [
-        'myid' => 'Get user ID',
+        'myid' => 'Retrieve user ID',
+        'myaccount' => 'Retrieve details about your account',
     ],
     'reports' => [
-        'account' => 'Get account details',
-        'newtrades' => 'Get new trades details',
-        'closedtrades' => 'Get closed trades details',
-        'summary' => 'Get summary details',
+        'newtrades' => 'Retrieve reports on your recent new trades',
+        'closedtrades' => 'Retrieve reports on your recent closed trades',
+        'summary' => 'Get an overview of your account',
     ],
 ];
