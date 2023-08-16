@@ -14,6 +14,8 @@ return [
     'total_orders' => 'Total Orders',
     'profit_today' => 'Profit Today',
     'profit_all_time' => 'Profit All Time',
+    'open_time' => 'Open Time',
+    'close_time' => 'Close Time',
     'here_it_is' => 'Here it is',
     'by' => 'by',
 
@@ -48,5 +50,7 @@ return [
         'account_existed' => '⚠️ Oops! It looks like you already have an existing account.',
         'unknown_command' => 'Sorry, I can\'t understand your command: :command',
         'select_account' => 'Please select an account:',
+        'open_trade_success' => 'Trade opened successfully! You\'ve entered a new position.',
+        'close_trade_success' => 'Trade closed successfully! Your position has been exited.',
     ],
 ];

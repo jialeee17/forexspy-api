@@ -85,6 +85,34 @@ class ChatService
         return $message;
     }
 
+    public static function notifyOpenTrade($trades)
+    {
+        $message = "✅ <b>" . __('telegram.message.open_trade_success') . "</b>\n\n";
+
+        foreach ($trades as $trade) {
+            $message .= strtoupper(__('telegram.' . $trade['type'])) . " " . strtoupper($trade['symbol']) . " @ {$trade['open_price']} for {$trade['lots']} " . __('telegram.lots') . " (" . __('telegram.open_time') . ": {$trade['open_at']})\n";
+        }
+
+        $message .= "\n <a href='" . config('app.url') ."'><i>" . __('telegram.by') . " " . config('app.name') . "</i></a>";
+
+        return $message;
+    }
+
+    public static function notifyCloseTrade($trades)
+    {
+        $message = "✅ <b>" . __('telegram.message.close_trade_success') . "</b>\n\n";
+
+        foreach ($trades as $trade) {
+            $emoji = $trade['take_profit'] > 0 ? '📈' : '📉';
+
+            $message .= $emoji . " " . strtoupper(__('telegram.' . $trade['type'])) . " " . strtoupper($trade['symbol']) . " ({$trade['lots']} " . __('telegram.lots') . ") @ {$trade['close_price']} - " . __('telegram.profits') . ": {$trade['take_profit']} (" . __('telegram.close_time') . ": {$trade['close_at']})\n";
+        }
+
+        $message .= "\n <a href='" . config('app.url') ."'><i>" . __('telegram.by') . " " . config('app.name') . "</i></a>";
+
+        return $message;
+    }
+
     /* -------------------------------------------------------------------------- */
     /*                                   Common                                   */
     /* -------------------------------------------------------------------------- */
