@@ -41,6 +41,6 @@ class ProcessCloseTradeNotification implements ShouldQueue
             throw new Exception('Chat not found.');
         }
 
-        $chat->html(ChatService::notifyCloseTrade($this->closeTrades))->send();
+        $chat->html(ChatService::notifyCloseTrade($this->closeTrades, $this->loginId))->send();
     }
 }

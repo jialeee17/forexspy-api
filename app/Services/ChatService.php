@@ -85,9 +85,10 @@ class ChatService
         return $message;
     }
 
-    public static function notifyOpenTrade($trades)
+    public static function notifyOpenTrade($trades, $loginId)
     {
-        $message = "✅ <b>" . __('telegram.message.open_trade_success') . "</b>\n\n";
+        $message = "✅ <b>" . __('telegram.message.open_trade_success') . "</b>\n\n"
+            . __('telegram.account.id') . ": $loginId\n\n";
 
         foreach ($trades as $trade) {
             $message .= strtoupper(__('telegram.' . $trade['type'])) . " " . strtoupper($trade['symbol']) . " @ {$trade['open_price']} for {$trade['lots']} " . __('telegram.lots') . " (" . __('telegram.open_time') . ": {$trade['open_at']})\n";
@@ -98,9 +99,10 @@ class ChatService
         return $message;
     }
 
-    public static function notifyCloseTrade($trades)
+    public static function notifyCloseTrade($trades, $loginId)
     {
-        $message = "✅ <b>" . __('telegram.message.close_trade_success') . "</b>\n\n";
+        $message = "✅ <b>" . __('telegram.message.close_trade_success') . "</b>\n\n"
+            . __('telegram.account.id') . ": $loginId\n\n";
 
         foreach ($trades as $trade) {
             $emoji = $trade['take_profit'] > 0 ? '📈' : '📉';
