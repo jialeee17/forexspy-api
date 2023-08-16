@@ -27,7 +27,7 @@
     },
     "autoload": {
         "files": [
-            "app/helpers.php",
+            "app/Helpers.php",
             "app/Services/ChatService.php"
         ],
         "psr-4": {
