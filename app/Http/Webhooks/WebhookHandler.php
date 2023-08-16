@@ -20,12 +20,6 @@ class WebhookHandler extends \DefStudio\Telegraph\Handlers\WebhookHandler
 
     public function start()
     {
-        $commands = config('botcommands');
-
-        if (!empty($commands)) {
-            $this->bot->registerCommands(Helper::getCommandList($commands))->send();
-        }
-
         $this->help();
     }
 
