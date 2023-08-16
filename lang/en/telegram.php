@@ -28,7 +28,6 @@ return [
         'id' => 'Account ID',
         'balance' => 'Account Balance',
         'equity' => 'Account Equity',
-        'not_found' => 'We couldn\'t find your MT account. Please try again later.',
     ],
 
     'trade' => [
@@ -36,7 +35,8 @@ return [
         'past_new_trades' => 'NEW trades for the past :period hours',
         'closed_trade' => 'Closed Trade',
         'past_closed_trades' => 'CLOSED trades for the past :period hours',
-        'not_found' => 'There are no trade records available for your account at the moment. Please check back later.',
+        'new_trade_not_found' => 'There are no new trade records available for your account at the moment. Please check back later.',
+        'close_trade_not_found' => 'There are no closed trade records available for your account at the moment. Please check back later.',
     ],
 
     'message' => [
@@ -52,5 +52,6 @@ return [
         'select_account' => 'Please select an account:',
         'open_trade_success' => 'Trade opened successfully! You\'ve entered a new position.',
         'close_trade_success' => 'Trade closed successfully! Your position has been exited.',
+        'mt_account_not_available' => 'Your account are unavailable. Please try again later.'
     ],
 ];

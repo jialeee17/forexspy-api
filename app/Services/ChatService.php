@@ -54,7 +54,7 @@ class ChatService
 
             $message .= "\n <a href='" . config('app.url') ."'><i>" . __('telegram.by') . " " . config('app.name') . "</i></a>";
         } else {
-            $message = __('telegram.trade.not_found');
+            $message = __('telegram.trade.new_trade_not_found');
         }
 
         return $message;
@@ -79,7 +79,7 @@ class ChatService
                 . "<a href='" . config('app.url') ."'><i>" . __('telegram.by') . " " . config('app.name') . "</i></a>";
         ;
         } else {
-            $message = __('telegram.trade.not_found');
+            $message = __('telegram.trade.close_trade_not_found');
         }
 
         return $message;
@@ -163,7 +163,7 @@ class ChatService
 
     public static function accountNotFound()
     {
-        $message = __('telegram.account.not_found');
+        $message = __('telegram.message.mt_account_not_available');
 
         return $message;
     }
