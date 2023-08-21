@@ -15,7 +15,7 @@ class TelegramUser extends Model
 
     protected $fillable = [
         'uuid',
-        'user_uuid',
+        'member_uuid',
         'telegraph_chat_id',
         'first_name',
         'last_name',
@@ -39,5 +39,10 @@ class TelegramUser extends Model
     public function chat(): BelongsTo
     {
         return $this->belongsTo(TelegraphChat::class, 'telegraph_chat_id');
+    }
+
+    public function memebr(): BelongsTo
+    {
+        return $this->belongsTo(Member::class, 'member_uuid', 'uuid');
     }
 }
