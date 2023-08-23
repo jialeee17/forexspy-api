@@ -7,6 +7,7 @@ use Inertia\Inertia;
 use Illuminate\Http\Request;
 use App\Repositories\UserRepository;
 use Illuminate\Support\Facades\Hash;
+use App\Http\Requests\UpsertUserRequest;
 
 class UserController extends Controller
 {
@@ -22,11 +23,7 @@ class UserController extends Controller
      */
     public function index()
     {
-        $users = User::get();
-
-        return Inertia::render('User/Index', [
-            'users' => $users
-        ]);
+        return Inertia::render('User/Index');
     }
 
     /**
@@ -40,15 +37,8 @@ class UserController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(UpsertUserRequest $request)
     {
-        $request->validate([
-            'name' => ['required', 'string', 'max:50'],
-            'username' => ['required', 'string', 'max:50', 'unique:users'],
-            'email' => ['required', 'email', 'max:50', 'unique:users'],
-            'password' => ['required', 'string']
-        ]);
-
         User::create([
             'name' => $request->name,
             'username' => $request->username,
@@ -86,15 +76,8 @@ class UserController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(UpsertUserRequest $request, string $id)
     {
-        $request->validate([
-            'name' => ['required', 'string', 'max:50'],
-            'username' => ['required', 'string', 'max:50', 'unique:users'],
-            'email' => ['required', 'email', 'max:50', 'unique:users'],
-            'password' => ['required', 'string']
-        ]);
-
         User::where('id', $id)
             ->update([
                 'name' => $request->name,
