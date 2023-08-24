@@ -15,6 +15,8 @@ class Kernel extends ConsoleKernel
         $schedule->command('model:prune', [
             '--model' => [WebhookCall::class],
         ])->daily();
+
+        $schedule->command('telescope:prune')->daily();
     }
 
     /**
