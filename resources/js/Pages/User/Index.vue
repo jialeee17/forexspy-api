@@ -29,14 +29,14 @@ function ajaxRequest(params) {
         url: route('users.list'),
         method: "GET",
         data: params.data,
-        success: function(response) {
+        success: function (response) {
             params.success(response.data);
         },
-        error: function(jqXHR, textStatus, errorThrown) {
+        error: function (jqXHR, textStatus, errorThrown) {
             // Handle error
             console.error("Error: " + errorThrown);
         },
-        complete: function(jqXHR, textStatus) {
+        complete: function (jqXHR, textStatus) {
             // Handle completion of the request (regardless of success or error)
             // console.log("Request completed with status: " + textStatus);
         }
@@ -47,23 +47,22 @@ function columns() {
     return [
         {
             title: 'ID',
-            formatter: idFormatter
+            formatter: idFormatter,
+            sortable: true,
         },
         {
             title: 'Name',
             field: 'name',
+            sortable: true,
         },
         {
             title: 'Username',
             field: 'username',
+            sortable: true,
         },
         {
             title: 'Email',
             field: 'email',
-        },
-        {
-            title: 'Status',
-            field: 'status',
         },
         {
             title: 'Action',
@@ -94,16 +93,17 @@ function actionFormatter(value, row, index, field) {
 
 function actionEvents() {
     return {
-        'click .btn-edit' :(event, value, row, index) => {
+        'click .btn-edit': (event, value, row, index) => {
             console.log('Edit');
             return;
         },
-        'click .btn-link' :(event, value, row, index) => {
+        'click .btn-link': (event, value, row, index) => {
             console.log('Link');
             return;
         },
     }
 }
+
 
 onMounted(() => {
     $('#table').bootstrapTable({
@@ -111,10 +111,15 @@ onMounted(() => {
         columns: columns(),
         pagination: true,
         sidePagination: 'server',
-        paginationVAlign: 'both',
+        paginationVAlign: 'bottom',
+        searchAlign: 'left',
         pageSize: 25,
-        pageList:"[25, 50, 75, 100]",
-        queryParams: queryParams
+        pageList: "[25, 50, 75, 100]",
+        queryParams: queryParams,
+        search: true,
+        searchable: true,
+        searchAlign: "right",
+
     })
 })
 </script>
