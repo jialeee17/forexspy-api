@@ -2,7 +2,8 @@ import './bootstrap';
 import '../css/app.css';
 import 'bootstrap/dist/js/bootstrap.min.js'
 import 'bootstrap/dist/css/bootstrap.min.css';
-import 'bootstrap-table';
+import 'bootstrap-table/dist/bootstrap-table.min.css';
+import 'bootstrap-table/dist/bootstrap-table.min.js';
 
 import { createApp, h } from 'vue';
 import { createInertiaApp } from '@inertiajs/vue3';
