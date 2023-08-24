@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Member;
 use Inertia\Inertia;
+use App\Models\Member;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use App\Repositories\MemberRepository;
+use App\Http\Requests\UpsertMemberRequest;
 
 class MemberController extends Controller
 {
@@ -40,19 +41,8 @@ class MemberController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(UpsertMemberRequest $request)
     {
-        $request->validate([
-            'username' => ['required', 'string', 'max:50', 'unique:members'],
-            'password' => ['required', 'string'],
-            'email' => ['required', 'email', 'max:50', 'unique:members'],
-            'first_name' => ['required', 'string', 'max:50'],
-            'last_name' => ['required', 'string', 'max:50'],
-            'phone_number' => ['required', 'string', 'max:50'],
-            'date_of_birth' => ['required', 'date'],
-            'gender' => ['required', 'string'],
-        ]);
-
         Member::create([
             'username' => $request->username,
             'password' => Hash::make($request->password),
@@ -94,19 +84,8 @@ class MemberController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(UpsertMemberRequest $request, string $id)
     {
-        $request->validate([
-            'username' => ['required', 'string', 'max:50', 'unique:members'],
-            'password' => ['required', 'string'],
-            'email' => ['required', 'email', 'max:50', 'unique:members'],
-            'first_name' => ['required', 'string', 'max:50'],
-            'last_name' => ['required', 'string', 'max:50'],
-            'phone_number' => ['required', 'string', 'max:50'],
-            'date_of_birth' => ['required', 'date'],
-            'gender' => ['required', 'string'],
-        ]);
-
         Member::where('id', $id)
             ->update([
                 'username' => $request->username,
