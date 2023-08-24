@@ -12,6 +12,7 @@
         "laravel/framework": "^10.10",
         "laravel/jetstream": "^3.2",
         "laravel/sanctum": "^3.2",
+        "laravel/telescope": "^4.16",
         "laravel/tinker": "^2.8",
         "spatie/laravel-permission": "^5.10",
         "spatie/laravel-webhook-client": "^3.2",
