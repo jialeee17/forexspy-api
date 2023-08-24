@@ -84,8 +84,10 @@ function idFormatter(value, row, index, field) {
 
 function actionFormatter(value, row, index, field) {
     const buttons = `
-        <a href="javascript:void(0)" class="btn-edit">Edit</a>
-        <a href="javascript:void(0)" class="btn-link">Link</a>
+    <div class="flex justify-evenly">
+        <a href="javascript:void(0)" class="btn-edit" style="font-size: 22px; "><i class="bi bi-pencil-square"></i></a>
+        <a href="javascript:void(0)" class="btn-link" style="font-size: 22px; color:red;"><i class="bi bi-trash3-fill"></i></a>
+    </div>
     `;
 
     return buttons;
