@@ -7,7 +7,7 @@ use App\Interfaces\UserRepositoryInterface;
 
 class UserRepository implements UserRepositoryInterface
 {
-    public function list ($request)
+    public function list($request)
     {
         $sort = $request->sort ?? 'id';
         $order = $request->order ?? 'asc';
@@ -29,5 +29,11 @@ class UserRepository implements UserRepositoryInterface
         ];
 
         return $data;
+    }
+
+    public function details($request, $id)
+    {
+        $user = User::find($id);
+        return $user;
     }
 }

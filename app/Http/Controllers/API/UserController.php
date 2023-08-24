@@ -27,7 +27,25 @@ class UserController extends Controller
             return new ApiSuccessResponse(
                 $data,
                 'Retrieved User List Successfully.',
-                Response::HTTP_CREATED
+                Response::HTTP_OK
+            );
+        } catch (Throwable $exception) {
+            return new ApiErrorResponse(
+                $exception->getMessage(),
+                $exception
+            );
+        }
+    }
+
+    public function details(Request $request, $id)
+    {
+        try {
+            $data = $this->userRepository->details($request, $id);
+
+            return new ApiSuccessResponse(
+                $data,
+                'Retrieved User Details Successfully.',
+                Response::HTTP_OK
             );
         } catch (Throwable $exception) {
             return new ApiErrorResponse(

@@ -21,4 +21,5 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Route::prefix('users')->name('users.')->group(function () {
     Route::get('/list', [UserController::class, 'list'])->name('list');
+    Route::get('/details/{id}', [UserController::class, 'details'])->name('details');
 });

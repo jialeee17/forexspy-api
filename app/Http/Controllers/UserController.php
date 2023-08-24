@@ -46,7 +46,7 @@ class UserController extends Controller
             'password' => Hash::make($request->password),
         ]);
 
-        return to_route('users.index');
+        return to_route('users.index')->with('success', 'User created successfully.');
     }
 
     /**
@@ -86,7 +86,7 @@ class UserController extends Controller
                 'password' => Hash::make($request->password),
             ]);
 
-        return to_route('users.index');
+        return to_route('users.index')->with('success', 'User updated successfully.');
     }
 
     /**
@@ -96,6 +96,6 @@ class UserController extends Controller
     {
         User::destroy($id);
 
-        return to_route('users.index');
+        return to_route('users.index')->with('success', 'User deleted successfully.');
     }
 }
