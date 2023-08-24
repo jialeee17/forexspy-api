@@ -84,10 +84,11 @@ function idFormatter(value, row, index, field) {
 
 function actionFormatter(value, row, index, field) {
     const buttons = `
-    <div class="flex justify-evenly">
-        <a href="javascript:void(0)" class="btn-edit" style="font-size: 22px; "><i class="bi bi-pencil-square"></i></a>
-        <a href="javascript:void(0)" class="btn-link" style="font-size: 22px; color:red;"><i class="bi bi-trash3-fill"></i></a>
-    </div>
+        <div class="flex justify-evenly">
+            <a href="javascript:void(0)" class="btn-edit" style="font-size: 22px;"><i class="bi bi-pencil-square"></i></a>
+            <a href="javascript:void(0)" class="btn-link" style="font-size: 22px; color: #2AABEE;"><i class="bi bi-telegram"></i></a>
+            <a href="javascript:void(0)" class="btn-delete" style="font-size: 22px; color: red;"><i class="bi bi-trash3-fill"></i></a>
+        </div>
     `;
 
     return buttons;
@@ -96,11 +97,15 @@ function actionFormatter(value, row, index, field) {
 function actionEvents() {
     return {
         'click .btn-edit': (event, value, row, index) => {
-            console.log('Edit');
+            console.log('Edit User');
             return;
         },
         'click .btn-link': (event, value, row, index) => {
-            console.log('Link');
+            console.log('Link Telegram Account');
+            return;
+        },
+        'click .btn-delete': (event, value, row, index) => {
+            console.log('Delete User');
             return;
         },
     }
