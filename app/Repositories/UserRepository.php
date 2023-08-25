@@ -9,31 +9,52 @@ class UserRepository implements UserRepositoryInterface
 {
     public function list($request)
     {
-        $sort = $request->sort ?? 'id';
-        $order = $request->order ?? 'asc';
         $offset = $request->offset;
         $limit = $request->limit;
         $page = $offset == 0 ? 1 : ($offset / $limit) + 1; // The page number to use as the starting point for pagination.
+        $sort = $request->sort ?? 'id';
+        $order = $request->order ?? 'asc';
+        $searchName = $request->searchName;
+        $searchUsername = $request->searchUsername;
+        $searchEmail = $request->searchEmail;
+        $searchStatus = $request->searchStatus;
 
-        // Get the total number of records, regardless of pagination or filtering.
-        $userNotFiltered = User::count();
+        $usersBuilder = User::when($searchName, function ($query) use ($searchName) {
+            $query->where('name', 'like', "%$searchName%");
+        })
+        ->when($searchUsername, function ($query) use ($searchUsername) {
+            $query->where('username', 'like', "%$searchUsername%");
+        })
+        ->when($searchEmail, function ($query) use ($searchEmail) {
+            $query->where('email', 'like', "%$searchEmail%");
+        })
+        ->when($searchStatus, function ($query) use ($searchStatus) {
+            $query->where('status', $searchStatus);
+        })
+        ->orderBy($sort, $order);
 
-        $users = User::when($sort, function ($query) use ($sort, $order) {
-            $query->orderBy($sort, $order);
-        })->paginate($limit, ['*'], 'page', $page);
+        if (isset($offset) && isset($limit)) {
+            // Get the total number of records, regardless of pagination or filtering.
+            $userNotFiltered = User::count();
 
-        $data = [
-            'total' => $users->total(),
-            'totalNotFiltered' => $userNotFiltered,
-            'rows' => $users->items(),
-        ];
+            $users = $usersBuilder->paginate($limit, ['*'], 'page', $page);
 
-        return $data;
+            $data = [
+                'total' => $users->total(),
+                'totalNotFiltered' => $userNotFiltered,
+                'rows' => $users->items(),
+            ];
+
+            return $data;
+        }
+
+        $users = $usersBuilder->get();
+
+        return $users;
     }
 
     public function details($request, $id)
     {
-        $user = User::find($id);
-        return $user;
+        return User::findOrFail($id);
     }
 }

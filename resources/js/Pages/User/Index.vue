@@ -119,13 +119,9 @@ onMounted(() => {
         pagination: true,
         sidePagination: 'server',
         paginationVAlign: 'bottom',
-        searchAlign: 'left',
         pageSize: 25,
         pageList: "[25, 50, 75, 100]",
         queryParams: queryParams,
-        search: true,
-        searchable: true,
-        searchAlign: "right",
 
     })
 })
