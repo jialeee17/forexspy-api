@@ -6,27 +6,27 @@ use Throwable;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use App\Http\Controllers\Controller;
-use App\Repositories\MemberRepository;
+use App\Repositories\TelegramUserRepository;
 use App\Http\Responses\ApiErrorResponse;
 use App\Http\Responses\ApiSuccessResponse;
 
-class MemberController extends Controller
+class TelegramUserController extends Controller
 {
-    private $memberRepository;
+    private $telegramUserRepository;
 
-    public function __construct(MemberRepository $memberRepository)
+    public function __construct(TelegramUserRepository $telegramUserRepository)
     {
-        $this->memberRepository = $memberRepository;
+        $this->telegramUserRepository = $telegramUserRepository;
     }
 
     public function list(Request $request)
     {
         try {
-            $data = $this->memberRepository->list($request);
+            $data = $this->telegramUserRepository->list($request);
 
             return new ApiSuccessResponse(
                 $data,
-                'Retrieved Member List Successfully.',
+                'Retrieved Telegram User List Successfully.',
                 Response::HTTP_OK
             );
         } catch (Throwable $exception) {
