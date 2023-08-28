@@ -7,6 +7,7 @@ use Exception;
 use Illuminate\Support\Facades\Log;
 use App\Jobs\ProcessOpenTradeNotification;
 use App\Jobs\ProcessCloseTradeNotification;
+use App\Models\MTAccount;
 use Spatie\WebhookClient\Jobs\ProcessWebhookJob as SpatieProcessWebhookJob;
 
 class ProcessWebhook extends SpatieProcessWebhookJob
@@ -23,11 +24,13 @@ class ProcessWebhook extends SpatieProcessWebhookJob
             $closeTrades = $data['new_close_trades'] ?? null;
             $isHistorical = $data['is_historical'] ?? null;
 
-            if (empty($loginId)) {
-                throw new Exception('Login ID not found.');
+            $account = MTAccount::where('login_id', $loginId)->first();
+
+            if (!$account) {
+                throw new Exception('Account not found.');
             }
 
-            if ($isHistorical) {
+            if ($isHistorical && !$account->initial_summary_notified) {
                 ProcessAccountNotification::dispatch($loginId);
             }
 
