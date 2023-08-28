@@ -46,6 +46,8 @@ class ProcessAccountNotification implements ShouldQueue
             throw new Exception('Account not found.');
         }
 
+        $account->update(['initial_summary_notified' => 1]);
+
         $chat->html(ChatService::showAccountDetails($account))->send();
     }
 }

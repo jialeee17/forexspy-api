@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Models\CloseTrade;
 use Exception;
 use App\Models\TelegraphChat;
 use App\Services\ChatService;
@@ -40,6 +41,16 @@ class ProcessCloseTradeNotification implements ShouldQueue
         if (empty($chat)) {
             throw new Exception('Chat not found.');
         }
+
+        $ticketIds = [];
+
+        foreach($this->closeTrades as $trade) {
+            if (isset($trade['ticket'])) {
+                $ticketIds[] = $trade['ticket'];
+            }
+        }
+
+        CloseTrade::whereIn('ticket', $ticketIds)->update(['is_notified' => 1]);
 
         $chat->html(ChatService::notifyCloseTrade($this->closeTrades, $this->loginId))->send();
     }

@@ -30,6 +30,7 @@ class MTAccount extends Model
         'active_orders',
         'profit_today',
         'profit_all_time',
+        'initial_summary_notified',
     ];
 
     protected $casts = [

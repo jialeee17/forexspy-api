@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Models\OpenTrade;
 use Exception;
 use App\Models\TelegraphChat;
 use App\Services\ChatService;
@@ -40,6 +41,16 @@ class ProcessOpenTradeNotification implements ShouldQueue
         if (empty($chat)) {
             throw new Exception('Chat not found.');
         }
+
+        $ticketIds = [];
+
+        foreach($this->openTrades as $trade) {
+            if (isset($trade['ticket'])) {
+                $ticketIds[] = $trade['ticket'];
+            }
+        }
+
+        OpenTrade::whereIn('ticket', $ticketIds)->update(['is_notified' => 1]);
 
         $chat->html(ChatService::notifyOpenTrade($this->openTrades, $this->loginId))->send();
     }
