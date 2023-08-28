@@ -24,6 +24,7 @@
         "bootstrap": "^5.3.1",
         "bootstrap-icons": "^1.10.5",
         "bootstrap-table": "^1.22.1",
-        "jquery": "^3.7.0"
+        "jquery": "^3.7.0",
+        "vue3-toastify": "^0.1.12"
     }
 }

@@ -14,16 +14,19 @@
             </div>
         </div>
 
-        <EditUserForm :id="userId"/>
+        <EditUserForm :id="userId" @updated="refreshTable" />
     </AppLayout>
 </template>
 
 <script setup>
-import { ref, onMounted, reactive, } from 'vue'
+import { ref, onMounted, reactive } from 'vue';
+import { router } from '@inertiajs/vue3';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import EditUserForm from './Partials/EditUserForm.vue';
+import { showSuccessToast, showErrorToast } from '../../../helpers/ToastHelper';
 
 const userId = ref(null);
+const table = ref(null);
 
 function ajaxRequest(params) {
     $.ajax({
@@ -35,6 +38,7 @@ function ajaxRequest(params) {
         },
         error: function (jqXHR, textStatus, errorThrown) {
             // Handle error
+            showErrorToast(errorThrown);
             console.error("Error: " + errorThrown);
         },
         complete: function (jqXHR, textStatus) {
@@ -86,7 +90,7 @@ function idFormatter(value, row, index, field) {
 function actionFormatter(value, row, index, field) {
     const buttons = `
         <div class="flex justify-evenly">
-            <a href="javascript:void(0)" class="btn-edit" data-bs-toggle="modal" data-bs-target="#editModal" @click="openModal" style="font-size: 22px; "><i class="bi bi-pencil-square"></i></a>
+            <a href="javascript:void(0)" class="btn-edit" data-bs-toggle="modal" data-bs-target="#editModal" style="font-size: 22px; "><i class="bi bi-pencil-square"></i></a>
             <a href="javascript:void(0)" class="btn-link" style="font-size: 22px; color: #2AABEE;"><i class="bi bi-telegram"></i></a>
             <a href="javascript:void(0)" class="btn-delete" style="font-size: 22px; color: red;"><i class="bi bi-trash3-fill"></i></a>
         </div>
@@ -105,15 +109,31 @@ function actionEvents() {
             return;
         },
         'click .btn-delete': (event, value, row, index) => {
-            console.log('Delete User');
+            deleteUser(row.id);
             return;
         },
     }
 }
 
+function refreshTable() {
+    table.value.bootstrapTable('refresh');
+}
+
+function deleteUser(id) {
+    router.delete(route('users.destroy', { id: id }), {
+        preserveScroll: true,
+        onSuccess: (page) => {
+            showSuccessToast(page.props.flash.success);
+            table.value.bootstrapTable('refresh');
+        },
+        onError: (page) => {
+            showErrorToast(page.props.flash.error);
+        }
+    })
+}
 
 onMounted(() => {
-    $('#table').bootstrapTable({
+    table.value = $('#table').bootstrapTable({
         ajax: ajaxRequest,
         columns: columns(),
         pagination: true,
@@ -122,7 +142,6 @@ onMounted(() => {
         pageSize: 25,
         pageList: "[25, 50, 75, 100]",
         queryParams: queryParams,
-
     })
 })
 </script>

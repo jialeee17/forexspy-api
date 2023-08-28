@@ -83,7 +83,7 @@ class UserController extends Controller
                 'name' => $request->name,
                 'username' => $request->username,
                 'email' => $request->email,
-                'password' => Hash::make($request->password),
+                // 'password' => Hash::make($request->password),
             ]);
 
         return to_route('users.index')->with('success', 'User updated successfully.');

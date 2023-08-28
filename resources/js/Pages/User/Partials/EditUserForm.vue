@@ -10,24 +10,19 @@
                     <div class="modal-body">
                         <div class="mb-3">
                             <label for="name" class="form-label">Name</label>
-                            <input type="text" class="form-control" id="name" v-model="form.name" placeholder="Name"
-                                required>
+                            <input type="text" class="form-control" id="name" v-model="form.name" placeholder="Name" required>
                             <div v-if="form.errors.name" class="text-danger">{{ form.errors.name }}</div>
                         </div>
                         <div class="mb-3">
                             <label for="exampleInputPassword1" class="form-label">Username</label>
-                            <input type="text" class="form-control" id="username" v-model="form.username"
-                                placeholder="Username" required>
+                            <input type="text" class="form-control" id="username" v-model="form.username" placeholder="Username" required>
                             <div v-if="form.errors.username" class="text-danger">{{ form.errors.username }}</div>
                         </div>
                         <div class="mb-3">
                             <label for="exampleInputPassword1" class="form-label">Email Address</label>
-                            <input type="email" class="form-control" id="email" v-model="form.email" placeholder="Email"
-                                :class="{ 'is-invalid': !isValidEmail }" required>
+                            <input type="email" class="form-control" id="email" v-model="form.email" placeholder="Email" :class="{ 'is-invalid': !isValidEmail }" required>
                             <div v-if="form.errors.email" class="text-danger">{{ form.errors.email }}</div>
-                            <!-- <p v-if="!isValidEmail" class="invalid-feedback">Please enter a valid email address.</p> -->
                         </div>
-
                     </div>
                     <div class="modal-footer">
                         <button type="submit" class="btn btn-primary" :disabled="form.processing">Update</button>
@@ -40,12 +35,17 @@
 </template>
 
 <script setup>
-import { ref, reactive, watch } from 'vue'
-import { useForm } from '@inertiajs/vue3'
+import { ref, reactive, watch, onMounted } from 'vue';
+import { useForm, usePage } from '@inertiajs/vue3';
+import { showSuccessToast, showErrorToast } from '../../../../helpers/ToastHelper';
 
 const props = defineProps({
     id: Number,
 })
+
+const emit = defineEmits(['updated'])
+
+const page = usePage()
 
 const form = useForm({
     name: '',
@@ -62,34 +62,21 @@ watch(() => props.id, (newId, oldId) => {
 }, { deep: true });
 
 // Functions
-// const validateEmail = () => {
-//     const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-//     isValidEmail.value = emailPattern.test(form.email);
-//     return emailPattern.test(form.email);
-// };
-
 function submit(event) {
-    form.put(route('users.update', { id: 2 }), {
+    form.put(route('users.update', { id: props.id }), {
         data: {
             name: form.name,
             username: form.username,
             email: form.email
         },
-        onSuccess: () => {
-            console.log('onSuccess');
+        onSuccess: (page) => {
+            emit('updated')
+            showSuccessToast(page.props.flash.success);
+        },
+        onError: (page) => {
+            showErrorToast(page.props.flash.error);
         }
     })
-    // if (isValidEmail) {
-    //     axios.get(route('users.details', { id: 2 })).then((res) => {
-    //         console.log(res.data.data)
-    //     }).catch((error) => {
-    //         console.log(error.message)
-    //     })
-    // }
-    // else {
-    //     e.preventDefault();
-    //     return;
-    // }
 }
 
 async function getUserDetails(id) {
@@ -104,6 +91,7 @@ async function getUserDetails(id) {
         form.username = response.data.data.username;
         form.email = response.data.data.email;
     } catch (error) {
+        showErrorToast(error.message);
         console.error(error);
     }
 }

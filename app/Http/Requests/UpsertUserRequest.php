@@ -25,7 +25,7 @@ class UpsertUserRequest extends FormRequest
             'name' => ['required', 'string', 'max:50'],
             'username' => ['required', 'string', 'max:50'],
             'email' => ['required', 'email', 'max:50'],
-            'password' => ['required', 'string'],
+            // 'password' => ['required', 'string'],
         ];
     }
 
