@@ -10,20 +10,39 @@
                     <div class="modal-body">
                         <div class="mb-3">
                             <label for="name" class="form-label">Name</label>
-                            <input type="text" class="form-control" id="name" v-model="form.name" placeholder="Name" required>
+                            <input type="text" class="form-control" id="name" v-model="form.name" placeholder="Name"
+                                required>
                             <div v-if="form.errors.name" class="text-danger">{{ form.errors.name }}</div>
                         </div>
                         <div class="mb-3">
                             <label for="exampleInputPassword1" class="form-label">Username</label>
-                            <input type="text" class="form-control" id="username" v-model="form.username" placeholder="Username" required>
+                            <input type="text" class="form-control" id="username" v-model="form.username"
+                                placeholder="Username" required>
                             <div v-if="form.errors.username" class="text-danger">{{ form.errors.username }}</div>
                         </div>
                         <div class="mb-3">
                             <label for="exampleInputPassword1" class="form-label">Email Address</label>
-                            <input type="email" class="form-control" id="email" v-model="form.email" placeholder="Email" :class="{ 'is-invalid': !isValidEmail }" required>
+                            <input type="email" class="form-control" id="email" v-model="form.email" placeholder="Email"
+                                :class="{ 'is-invalid': !isValidEmail }" required>
                             <div v-if="form.errors.email" class="text-danger">{{ form.errors.email }}</div>
                         </div>
+
+                        <div class="flex flex-col">
+                            <label for="exampleInputPassword1" class="form-label">Status</label>
+                            <div class="dropdown">
+                                <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown"
+                                    aria-expanded="false">
+                                    {{ capitalizeFLetter(form.status) }}
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" @click="onChange('active')">Active</a></li>
+                                    <li><a class="dropdown-item" @click="onChange('inactive')">Inactive</a></li>
+                                </ul>
+                            </div>
+                        </div>
+
                     </div>
+
                     <div class="modal-footer">
                         <button type="submit" class="btn btn-primary" :disabled="form.processing">Update</button>
                     </div>
@@ -38,10 +57,16 @@
 import { ref, reactive, watch, onMounted } from 'vue';
 import { useForm, usePage } from '@inertiajs/vue3';
 import { showSuccessToast, showErrorToast } from '../../../../helpers/ToastHelper';
+import { capitalizeFLetter } from '../../../../helpers/utilitiesHelper'
+
 
 const props = defineProps({
     id: Number,
 })
+
+const onChange = (stat) => {
+    form.status = stat;
+}
 
 const emit = defineEmits(['updated'])
 
@@ -51,6 +76,7 @@ const form = useForm({
     name: '',
     username: '',
     email: '',
+    status: '',
 });
 
 // const email = ref('');
@@ -67,7 +93,8 @@ function submit(event) {
         data: {
             name: form.name,
             username: form.username,
-            email: form.email
+            email: form.email,
+            status: form.status,
         },
         onSuccess: (page) => {
             emit('updated')
@@ -90,6 +117,7 @@ async function getUserDetails(id) {
         form.name = response.data.data.name;
         form.username = response.data.data.username;
         form.email = response.data.data.email;
+        form.status = response.data.data.status;
     } catch (error) {
         showErrorToast(error.message);
         console.error(error);

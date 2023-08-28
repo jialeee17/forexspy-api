@@ -55,11 +55,13 @@ function columns() {
             title: 'ID',
             formatter: idFormatter,
             sortable: true,
+            width: "20"
         },
         {
             title: 'Name',
             field: 'name',
             sortable: true,
+            width: "270"
         },
         {
             title: 'Username',
@@ -69,6 +71,7 @@ function columns() {
         {
             title: 'Email',
             field: 'email',
+            width: "270"
         },
         {
             title: 'Status',
@@ -88,6 +91,14 @@ function queryParams(params) {
         ...params,
     }
 }
+function statFormatter(value, row, index, field) {
+
+    if (row.status === 'active') {
+        return `<p class="text-green-500">Active</p>`
+    }
+    return `<p class="text-red-500">Inactive</p>`
+}
+
 
 function idFormatter(value, row, index, field) {
     return index + 1;
@@ -122,7 +133,10 @@ function actionEvents() {
 }
 
 function statusFormatter(value, row, index, field) {
-    return capitalizeFLetter(value);
+    if (row.status === 'active') {
+        return `<div class="text-green-500">Active</div>`
+    }
+    return `<div class="text-red-500">Inactive</div>`
 }
 
 function refreshTable() {
@@ -157,5 +171,5 @@ onMounted(() => {
 </script>
 
 <style lang="scss">
-    //
+//
 </style>

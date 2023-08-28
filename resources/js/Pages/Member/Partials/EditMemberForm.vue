@@ -40,7 +40,6 @@
                             <!-- <p v-if="!isValidEmail" class="invalid-feedback">Please enter a valid email address.</p> -->
                         </div>
 
-
                     </div>
                     <div class="modal-footer">
                         <button type="submit" class="btn btn-primary" :disabled="form.processing">Update</button>
@@ -55,6 +54,7 @@
 <script setup>
 import { ref, reactive, watch } from 'vue'
 import { useForm } from '@inertiajs/vue3'
+import { capitalizeFLetter } from '../../../helpers/utilitiesHelper'
 
 const props = defineProps({
     id: Number,
