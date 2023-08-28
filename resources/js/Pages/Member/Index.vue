@@ -14,15 +14,16 @@
             </div>
         </div>
 
-        <!-- <EditUserForm/> -->
+        <EditMemberForm :id="memberId" />
     </AppLayout>
 </template>
 
 <script setup>
 import { ref, onMounted, reactive, } from 'vue'
 import AppLayout from '@/Layouts/AppLayout.vue';
+import EditMemberForm from './Partials/EditMemberForm.vue';
 
-const userId = ref(null);
+const memberId = ref(null);
 
 function ajaxRequest(params) {
     $.ajax({
@@ -31,7 +32,7 @@ function ajaxRequest(params) {
         data: params.data,
         success: function (response) {
             params.success(response.data);
-            console.log(response.data)
+
         },
         error: function (jqXHR, textStatus, errorThrown) {
             // Handle error
@@ -103,7 +104,7 @@ function actionFormatter(value, row, index, field) {
 function actionEvents() {
     return {
         'click .btn-edit': async (event, value, row, index) => {
-            userId.value = row.id;
+            memberId.value = row.id;
         },
         'click .btn-link': (event, value, row, index) => {
             console.log('Link Telegram Account');

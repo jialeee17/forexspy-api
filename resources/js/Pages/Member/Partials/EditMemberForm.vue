@@ -3,16 +3,22 @@
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="exampleModalLabel">Edit User</h1>
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Edit Member</h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <form @submit.prevent="submit">
                     <div class="modal-body">
                         <div class="mb-3">
-                            <label for="name" class="form-label">Name</label>
-                            <input type="text" class="form-control" id="name" v-model="form.name" placeholder="Name"
+                            <label for="name" class="form-label">First Name</label>
+                            <input type="text" class="form-control" id="name" v-model="form.first_name" placeholder="Name"
                                 required>
-                            <div v-if="form.errors.name" class="text-danger">{{ form.errors.name }}</div>
+                            <div v-if="form.errors.name" class="text-danger">{{ form.errors.first_name }}</div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Last Name</label>
+                            <input type="text" class="form-control" id="name" v-model="form.last_name" placeholder="Name"
+                                required>
+                            <div v-if="form.errors.name" class="text-danger">{{ form.errors.last_name }}</div>
                         </div>
                         <div class="mb-3">
                             <label for="exampleInputPassword1" class="form-label">Username</label>
@@ -21,12 +27,19 @@
                             <div v-if="form.errors.username" class="text-danger">{{ form.errors.username }}</div>
                         </div>
                         <div class="mb-3">
+                            <label for="name" class="form-label">Gender</label>
+                            <input type="text" class="form-control" id="name" v-model="form.gender" placeholder="Name"
+                                required>
+                            <div v-if="form.errors.name" class="text-danger">{{ form.errors.gender }}</div>
+                        </div>
+                        <div class="mb-3">
                             <label for="exampleInputPassword1" class="form-label">Email Address</label>
                             <input type="email" class="form-control" id="email" v-model="form.email" placeholder="Email"
                                 :class="{ 'is-invalid': !isValidEmail }" required>
                             <div v-if="form.errors.email" class="text-danger">{{ form.errors.email }}</div>
                             <!-- <p v-if="!isValidEmail" class="invalid-feedback">Please enter a valid email address.</p> -->
                         </div>
+
 
                     </div>
                     <div class="modal-footer">
@@ -48,8 +61,10 @@ const props = defineProps({
 })
 
 const form = useForm({
-    name: '',
+    first_name: '',
+    last_name: '',
     username: '',
+    gender: '',
     email: '',
 });
 
@@ -93,16 +108,19 @@ function submit(event) {
 }
 
 async function getUserDetails(id) {
+    //TODO change logic for updating edit form.
     try {
-        const response = await axios.get(route('users.details', { id: id }));
+        const response = await axios.get(route('members.details', { id: id }));
 
         if (!response.data.status) {
             throw new Error('Something went wrong...');
         }
 
-        form.name = response.data.data.name;
+        form.first_name = response.data.data.first_name;
+        form.last_name = response.data.data.last_name;
         form.username = response.data.data.username;
         form.email = response.data.data.email;
+        form.gender = response.data.data.gender;
     } catch (error) {
         console.error(error);
     }
