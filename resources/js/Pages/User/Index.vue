@@ -19,14 +19,15 @@
 </template>
 
 <script setup>
-import { ref, onMounted, reactive } from 'vue';
-import { router } from '@inertiajs/vue3';
-import AppLayout from '@/Layouts/AppLayout.vue';
-import EditUserForm from './Partials/EditUserForm.vue';
-import { showSuccessToast, showErrorToast } from '../../../helpers/ToastHelper';
+import { ref, onMounted, reactive } from 'vue'
+import { router } from '@inertiajs/vue3'
+import AppLayout from '@/Layouts/AppLayout.vue'
+import EditUserForm from './Partials/EditUserForm.vue'
+import { showSuccessToast, showErrorToast } from '../../../helpers/ToastHelper'
+import { capitalizeFLetter } from '../../../helpers/utilitiesHelper'
 
-const userId = ref(null);
-const table = ref(null);
+const userId = ref(null)
+const table = ref(null)
 
 function ajaxRequest(params) {
     $.ajax({
@@ -68,6 +69,11 @@ function columns() {
         {
             title: 'Email',
             field: 'email',
+        },
+        {
+            title: 'Status',
+            field: 'status',
+            formatter: statusFormatter
         },
         {
             title: 'Action',
@@ -115,8 +121,12 @@ function actionEvents() {
     }
 }
 
+function statusFormatter(value, row, index, field) {
+    return capitalizeFLetter(value);
+}
+
 function refreshTable() {
-    table.value.bootstrapTable('refresh');
+    table.value.bootstrapTable('refresh', { silent: true });
 }
 
 function deleteUser(id) {
