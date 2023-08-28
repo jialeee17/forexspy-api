@@ -2,6 +2,8 @@
 
 namespace App\Http\Requests;
 
+use App\Models\User;
+use Illuminate\Validation\Rule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UpsertUserRequest extends FormRequest
@@ -25,6 +27,7 @@ class UpsertUserRequest extends FormRequest
             'name' => ['required', 'string', 'max:50'],
             'username' => ['required', 'string', 'max:50'],
             'email' => ['required', 'email', 'max:50'],
+            'status' => ['required', Rule::in(User::$status)],
             // 'password' => ['required', 'string'],
         ];
     }

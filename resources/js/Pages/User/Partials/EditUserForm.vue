@@ -23,20 +23,24 @@
                         <div class="mb-3">
                             <label for="exampleInputPassword1" class="form-label">Email Address</label>
                             <input type="email" class="form-control" id="email" v-model="form.email" placeholder="Email"
-                                :class="{ 'is-invalid': !isValidEmail }" required>
+                                required>
                             <div v-if="form.errors.email" class="text-danger">{{ form.errors.email }}</div>
                         </div>
 
                         <div class="flex flex-col">
-                            <label for="exampleInputPassword1" class="form-label">Status</label>
+                            <label for="status" class="form-label">Status</label>
                             <div class="dropdown">
                                 <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown"
                                     aria-expanded="false">
                                     {{ capitalizeFLetter(form.status) }}
                                 </button>
                                 <ul class="dropdown-menu">
-                                    <li><a class="dropdown-item" @click="onChange('active')">Active</a></li>
-                                    <li><a class="dropdown-item" @click="onChange('inactive')">Inactive</a></li>
+                                    <li>
+                                        <a class="dropdown-item" @click="onChange('active')">Active</a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" @click="onChange('inactive')">Inactive</a>
+                                    </li>
                                 </ul>
                             </div>
                         </div>
@@ -64,10 +68,6 @@ const props = defineProps({
     id: Number,
 })
 
-const onChange = (stat) => {
-    form.status = stat;
-}
-
 const emit = defineEmits(['updated'])
 
 const page = usePage()
@@ -78,9 +78,6 @@ const form = useForm({
     email: '',
     status: '',
 });
-
-// const email = ref('');
-const isValidEmail = ref(true);
 
 // Watchers
 watch(() => props.id, (newId, oldId) => {
@@ -123,14 +120,12 @@ async function getUserDetails(id) {
         console.error(error);
     }
 }
+
+const onChange = (stat) => {
+    form.status = stat;
+}
 </script>
 
 <style lang="scss">
-.is-invalid {
-    border-color: red;
-}
-
-.invalid-feedback {
-    color: red;
-}
+//
 </style>

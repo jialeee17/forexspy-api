@@ -91,14 +91,11 @@ function queryParams(params) {
         ...params,
     }
 }
-function statFormatter(value, row, index, field) {
 
-    if (row.status === 'active') {
-        return `<p class="text-green-500">Active</p>`
-    }
-    return `<p class="text-red-500">Inactive</p>`
+function statusFormatter(value, row, index, field) {
+    const className = row.status === 'active' ? 'text-green-500' : 'text-red-500';
+    return `<div class="${className}">${capitalizeFLetter(value)}</div>`
 }
-
 
 function idFormatter(value, row, index, field) {
     return index + 1;
@@ -130,13 +127,6 @@ function actionEvents() {
             return;
         },
     }
-}
-
-function statusFormatter(value, row, index, field) {
-    if (row.status === 'active') {
-        return `<div class="text-green-500">Active</div>`
-    }
-    return `<div class="text-red-500">Inactive</div>`
 }
 
 function refreshTable() {
