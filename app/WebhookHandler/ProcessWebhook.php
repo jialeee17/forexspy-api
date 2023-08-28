@@ -2,6 +2,7 @@
 
 namespace App\WebhookHandler;
 
+use App\Jobs\ProcessAccountNotification;
 use Exception;
 use Illuminate\Support\Facades\Log;
 use App\Jobs\ProcessOpenTradeNotification;
@@ -17,12 +18,17 @@ class ProcessWebhook extends SpatieProcessWebhookJob
 
             $data = $webhook['payload'];
 
-            $loginId = $data['login_id'];
-            $openTrades = $data['new_open_trades'];
-            $closeTrades = $data['new_close_trades'];
+            $loginId = $data['login_id'] ?? null;
+            $openTrades = $data['new_open_trades'] ?? null;
+            $closeTrades = $data['new_close_trades'] ?? null;
+            $isHistorical = $data['is_historical'] ?? null;
 
             if (empty($loginId)) {
                 throw new Exception('Login ID not found.');
+            }
+
+            if ($isHistorical) {
+                ProcessAccountNotification::dispatch($loginId);
             }
 
             if (!empty($openTrades)) {
