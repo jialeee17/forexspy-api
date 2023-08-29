@@ -72,4 +72,9 @@ class MemberRepository implements MemberRepositoryInterface
 
         return $members;
     }
+
+    public function details($request, $id)
+    {
+        return Member::findOrFail($id);
+    }
 }

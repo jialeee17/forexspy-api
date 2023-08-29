@@ -28,7 +28,6 @@ class UpsertUserRequest extends FormRequest
             'username' => ['required', 'string', 'max:50'],
             'email' => ['required', 'email', 'max:50'],
             'status' => ['required', Rule::in(User::$status)],
-            // 'password' => ['required', 'string'],
         ];
     }
 
@@ -38,7 +37,7 @@ class UpsertUserRequest extends FormRequest
             'name' => 'Name',
             'username' => 'Username',
             'email' => 'Email',
-            'password' => 'Password',
+            'status' => 'Status',
         ];
     }
 }

@@ -32,4 +32,5 @@ Route::prefix('telegram-users')->name('telegramUsers.')->group(function () {
 
 Route::prefix('members')->name('members.')->group(function () {
     Route::get('/list', [MemberController::class, 'list'])->name('list');
+    Route::get('/details/{id}', [MemberController::class, 'details'])->name('details');
 });

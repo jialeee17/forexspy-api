@@ -22,7 +22,7 @@
 import { ref, onMounted, reactive } from 'vue'
 import { router } from '@inertiajs/vue3'
 import AppLayout from '@/Layouts/AppLayout.vue'
-import EditUserForm from './Partials/EditUserForm.vue'
+import EditUserForm from '@/Pages/User/Partials/EditUserForm.vue'
 import { showSuccessToast, showErrorToast } from '../../../helpers/ToastHelper'
 import { capitalizeFLetter } from '../../../helpers/utilitiesHelper'
 
@@ -53,9 +53,8 @@ function columns() {
     return [
         {
             title: 'ID',
-            formatter: idFormatter,
-            sortable: true,
-            width: "20"
+            width: "20",
+            formatter: idFormatter
         },
         {
             title: 'Name',
@@ -160,6 +159,6 @@ onMounted(() => {
 })
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 //
 </style>

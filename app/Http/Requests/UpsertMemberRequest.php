@@ -2,6 +2,8 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Member;
+use Illuminate\Validation\Rule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UpsertMemberRequest extends FormRequest
@@ -11,7 +13,7 @@ class UpsertMemberRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,14 +24,14 @@ class UpsertMemberRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'username' => ['required', 'string', 'max:50', 'unique:members'],
-            'password' => ['required', 'string'],
-            'email' => ['required', 'email', 'max:50', 'unique:members'],
+            'username' => ['required', 'string', 'max:50'],
             'first_name' => ['required', 'string', 'max:50'],
             'last_name' => ['required', 'string', 'max:50'],
-            'phone_number' => ['required', 'string', 'max:50'],
+            'email' => ['required', 'email', 'max:50'],
+            'phone_number' => ['required', 'string'],
             'date_of_birth' => ['required', 'date'],
-            'gender' => ['required', 'string'],
+            'gender' => ['required', Rule::in(Member::$gender)],
+            'status' => ['required', Rule::in(Member::$status)],
         ];
     }
 
@@ -37,13 +39,13 @@ class UpsertMemberRequest extends FormRequest
     {
         return [
             'username' => 'Username',
-            'password' => 'Password',
-            'email' => 'Email',
             'first_name' => 'First Name',
             'last_name' => 'Last Name',
+            'email' => 'Email',
             'phone_number' => 'Phone Number',
             'date_of_birth' => 'Date of Birth',
             'gender' => 'Gender',
+            'status' => 'Status',
         ];
     }
 }

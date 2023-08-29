@@ -36,4 +36,22 @@ class MemberController extends Controller
             );
         }
     }
+
+    public function details(Request $request, $id)
+    {
+        try {
+            $data = $this->memberRepository->details($request, $id);
+
+            return new ApiSuccessResponse(
+                $data,
+                'Retrieved Member Details Successfully.',
+                Response::HTTP_OK
+            );
+        } catch (Throwable $exception) {
+            return new ApiErrorResponse(
+                $exception->getMessage(),
+                $exception
+            );
+        }
+    }
 }

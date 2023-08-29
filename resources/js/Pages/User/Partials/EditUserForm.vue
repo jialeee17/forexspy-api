@@ -44,7 +44,6 @@
                                 </ul>
                             </div>
                         </div>
-
                     </div>
 
                     <div class="modal-footer">
@@ -126,6 +125,6 @@ const onChange = (stat) => {
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 //
 </style>

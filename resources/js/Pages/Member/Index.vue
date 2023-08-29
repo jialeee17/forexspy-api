@@ -14,16 +14,20 @@
             </div>
         </div>
 
-        <EditMemberForm :id="memberId" />
+        <EditMemberForm :id="memberId" @updated="refreshTable" />
     </AppLayout>
 </template>
 
 <script setup>
 import { ref, onMounted, reactive, } from 'vue'
-import AppLayout from '@/Layouts/AppLayout.vue';
-import EditMemberForm from './Partials/EditMemberForm.vue';
+import AppLayout from '@/Layouts/AppLayout.vue'
+import { router } from '@inertiajs/vue3'
+import EditMemberForm from '@/Pages/Member/Partials/EditMemberForm.vue'
+import { capitalizeFLetter } from '../../../helpers/utilitiesHelper'
+import { showSuccessToast, showErrorToast } from '../../../helpers/ToastHelper'
 
-const memberId = ref(null);
+const memberId = ref(null)
+const table = ref(null)
 
 function ajaxRequest(params) {
     $.ajax({
@@ -49,8 +53,7 @@ function columns() {
     return [
         {
             title: 'ID',
-            field: 'id',
-            sortable: true,
+            formatter: idFormatter
         },
         {
             title: 'Username',
@@ -68,12 +71,26 @@ function columns() {
             sortable: true,
         },
         {
-            title: 'Gender',
-            field: 'gender',
-        },
-        {
             title: 'Email',
             field: 'email',
+        },
+        {
+            title: 'Phone Number',
+            field: 'phone_number',
+        },
+        {
+            title: 'Date of Birth',
+            field: 'date_of_birth',
+        },
+        {
+            title: 'Gender',
+            field: 'gender',
+            formatter: genderFormatter
+        },
+        {
+            title: 'Status',
+            field: 'status',
+            formatter: statusFormatter
         },
         {
             title: 'Action',
@@ -89,11 +106,14 @@ function queryParams(params) {
     }
 }
 
+function idFormatter(value, row, index, field) {
+    return index + 1;
+}
+
 function actionFormatter(value, row, index, field) {
     const buttons = `
         <div class="flex justify-evenly">
             <a href="javascript:void(0)" class="btn-edit" data-bs-toggle="modal" data-bs-target="#editModal" @click="openModal" style="font-size: 22px; "><i class="bi bi-pencil-square"></i></a>
-            <a href="javascript:void(0)" class="btn-link" style="font-size: 22px; color: #2AABEE;"><i class="bi bi-telegram"></i></a>
             <a href="javascript:void(0)" class="btn-delete" style="font-size: 22px; color: red;"><i class="bi bi-trash3-fill"></i></a>
         </div>
     `;
@@ -106,20 +126,41 @@ function actionEvents() {
         'click .btn-edit': async (event, value, row, index) => {
             memberId.value = row.id;
         },
-        'click .btn-link': (event, value, row, index) => {
-            console.log('Link Telegram Account');
-            return;
-        },
         'click .btn-delete': (event, value, row, index) => {
-            console.log('Delete User');
+            deleteMember(row.id);
             return;
         },
     }
 }
 
+function genderFormatter(value, row, index, field) {
+    return capitalizeFLetter(value);
+}
+
+function statusFormatter(value, row, index, field) {
+    const className = row.status === 'active' ? 'text-green-500' : 'text-red-500';
+    return `<div class="${className}">${capitalizeFLetter(value)}</div>`
+}
+
+function deleteMember(id) {
+    router.delete(route('members.destroy', { id: id }), {
+        preserveScroll: true,
+        onSuccess: (page) => {
+            showSuccessToast(page.props.flash.success);
+            table.value.bootstrapTable('refresh');
+        },
+        onError: (page) => {
+            showErrorToast(page.props.flash.error);
+        }
+    })
+}
+
+function refreshTable() {
+    table.value.bootstrapTable('refresh', { silent: true });
+}
 
 onMounted(() => {
-    $('#table').bootstrapTable({
+    table.value = $('#table').bootstrapTable({
         ajax: ajaxRequest,
         columns: columns(),
         pagination: true,
@@ -133,4 +174,6 @@ onMounted(() => {
 })
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+//
+</style>

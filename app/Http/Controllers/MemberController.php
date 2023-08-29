@@ -54,7 +54,7 @@ class MemberController extends Controller
             'gender' => $request->gender,
         ]);
 
-        return to_route('members.index');
+        return to_route('members.index')->with('success', 'Member created successfully.');
     }
 
     /**
@@ -89,16 +89,16 @@ class MemberController extends Controller
         Member::where('id', $id)
             ->update([
                 'username' => $request->username,
-                'password' => Hash::make($request->password),
-                'email' => $request->email,
                 'first_name' => $request->first_name,
                 'last_name' => $request->last_name,
+                'email' => $request->email,
                 'phone_number' => $request->phone_number,
                 'date_of_birth' => $request->date_of_birth,
                 'gender' => $request->gender,
+                'status' => $request->status
             ]);
 
-        return to_route('members.index');
+        return to_route('members.index')->with('success', 'Member updated successfully.');
     }
 
     /**
@@ -108,6 +108,6 @@ class MemberController extends Controller
     {
         Member::destroy($id);
 
-        return to_route('members.index');
+        return to_route('members.index')->with('success', 'Member deleted successfully.');
     }
 }
