@@ -8,6 +8,9 @@
 
         <div class="py-12 px-4">
             <div class="bg-white rounded shadow p-5">
+                <div class="d-flex justify-content-end mb-3">
+                    <Link class="btn btn-primary" :href="route('members.create')" method="get" as="button">Create</Link>
+                </div>
                 <table id="table"></table>
             </div>
         </div>
@@ -19,9 +22,9 @@
 <script setup>
 import { ref, onMounted, reactive, } from 'vue'
 import AppLayout from '@/Layouts/AppLayout.vue'
-import { router } from '@inertiajs/vue3'
+import { Link, router } from '@inertiajs/vue3'
 import EditMemberForm from '@/Pages/Member/Partials/EditMemberForm.vue'
-import { capitalizeFLetter } from '../../../helpers/utilitiesHelper'
+import { capitalizeFLetter } from '../../../helpers/UtilitiesHelper'
 import { showSuccessToast, showErrorToast } from '../../../helpers/ToastHelper'
 
 const memberId = ref(null)
@@ -118,8 +121,8 @@ function idFormatter(value, row, index, field) {
 function actionFormatter(value, row, index, field) {
     const buttons = `
         <div class="d-flex justify-content-evenly align-items-center">
-            <a href="javascript:void(0)" class="btn-edit" data-bs-toggle="modal" data-bs-target="#editModal" style="font-size: 20px;"><i class="bi bi-pencil-square"></i></a>
-            <a href="javascript:void(0)" class="btn-delete" style="font-size: 20px; color: red;"><i class="bi bi-trash3-fill"></i></a>
+            <a href="javascript:void(0)" class="btn-edit" data-bs-toggle="modal" data-bs-target="#editModal" style="font-size: 20px;" data-toggle="tooltip" title="Edit Member"><i class="bi bi-pencil-square"></i></a>
+            <a href="javascript:void(0)" class="btn-delete" style="font-size: 20px; color: red;" data-toggle="tooltip" title="Delete Member"><i class="bi bi-trash3-fill"></i></a>
         </div>
     `;
 
@@ -159,6 +162,14 @@ function deleteMember(id) {
     })
 }
 
+function rowStyle(row, index) {
+    return {
+        css: {
+            'background-color': index % 2 === 0 ? '#f2f2f2' : '#fff'
+        }
+    }
+}
+
 function refreshTable() {
     table.value.bootstrapTable('refresh', { silent: true });
 }
@@ -167,6 +178,7 @@ onMounted(() => {
     table.value = $('#table').bootstrapTable({
         ajax: ajaxRequest,
         columns: columns(),
+        rowStyle: rowStyle,
         pagination: true,
         sidePagination: 'server',
         paginationVAlign: 'bottom',

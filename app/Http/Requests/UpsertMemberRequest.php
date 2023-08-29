@@ -25,6 +25,7 @@ class UpsertMemberRequest extends FormRequest
     {
         return [
             'username' => ['required', 'string', 'max:50'],
+            'password' => ['nullable', 'string'],
             'first_name' => ['required', 'string', 'max:50'],
             'last_name' => ['required', 'string', 'max:50'],
             'email' => ['required', 'email', 'max:50'],
@@ -39,6 +40,7 @@ class UpsertMemberRequest extends FormRequest
     {
         return [
             'username' => 'Username',
+            'password' => 'Password',
             'first_name' => 'First Name',
             'last_name' => 'Last Name',
             'email' => 'Email',
