@@ -44,6 +44,7 @@ class UserController extends Controller
             'username' => $request->username,
             'email' => $request->email,
             'password' => Hash::make($request->password),
+            'status' => $request->status,
         ]);
 
         return to_route('users.index')->with('success', 'User created successfully.');

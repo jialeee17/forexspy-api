@@ -7,14 +7,11 @@
         </template>
 
         <div class="py-12">
-            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 my-5">
-                <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg p-5">
-                    <div class="pb-3 w-full flex justify-end">
-                        <Link class="btn btn-primary" :href="route('users.create')" method="get" as="button">Create User
-                        </Link>
-                    </div>
-                    <table id="table"></table>
+            <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg p-5">
+                <div class="pb-3 w-full flex justify-end">
+                    <Link class="btn btn-primary" :href="route('users.create')" method="get" as="button">Create</Link>
                 </div>
+                <table id="table"></table>
             </div>
         </div>
 
@@ -29,7 +26,6 @@ import AppLayout from '@/Layouts/AppLayout.vue'
 import EditUserForm from '@/Pages/User/Partials/EditUserForm.vue'
 import { showSuccessToast, showErrorToast } from '../../../helpers/ToastHelper'
 import { capitalizeFLetter } from '../../../helpers/UtilitiesHelper'
-import axios from 'axios'
 
 const userId = ref(null)
 const table = ref(null)
@@ -90,9 +86,6 @@ function columns() {
     ]
 }
 
-function directToCreate() {
-    axios.get(route('users.create'))
-}
 function queryParams(params) {
     return {
         ...params,
@@ -101,7 +94,7 @@ function queryParams(params) {
 
 function statusFormatter(value, row, index, field) {
     const className = row.status === 'active' ? 'text-green-500' : 'text-red-500';
-    return `<div class="${className}">${capitalizeFLetter(value)}</div>`
+    return `<div class="${className}">${capitalizeFLetter(value)}</div>`;
 }
 
 function idFormatter(value, row, index, field) {
