@@ -51,7 +51,7 @@ function columns() {
     return [
         {
             title: 'ID',
-            formatter: idFormatter
+            formatter: idFormatter,
         },
         {
             title: 'Username',
@@ -71,6 +71,7 @@ function columns() {
         {
             title: 'Email',
             field: 'email',
+            sortable: true,
         },
         {
             title: 'Phone Number',
@@ -79,21 +80,27 @@ function columns() {
         {
             title: 'Date of Birth',
             field: 'date_of_birth',
+            sortable: true,
         },
         {
             title: 'Gender',
             field: 'gender',
-            formatter: genderFormatter
+            align: 'center',
+            sortable: true,
+            formatter: genderFormatter,
         },
         {
             title: 'Status',
             field: 'status',
-            formatter: statusFormatter
+            align: 'center',
+            sortable: true,
+            formatter: statusFormatter,
         },
         {
             title: 'Action',
+            align: 'center',
             formatter: actionFormatter,
-            events: actionEvents()
+            events: actionEvents(),
         },
     ]
 }
@@ -110,9 +117,9 @@ function idFormatter(value, row, index, field) {
 
 function actionFormatter(value, row, index, field) {
     const buttons = `
-        <div class="flex justify-evenly">
-            <a href="javascript:void(0)" class="btn-edit" data-bs-toggle="modal" data-bs-target="#editModal" @click="openModal" style="font-size: 22px; "><i class="bi bi-pencil-square"></i></a>
-            <a href="javascript:void(0)" class="btn-delete" style="font-size: 22px; color: red;"><i class="bi bi-trash3-fill"></i></a>
+        <div class="d-flex justify-content-evenly align-items-center">
+            <a href="javascript:void(0)" class="btn-edit" data-bs-toggle="modal" data-bs-target="#editModal" style="font-size: 20px;"><i class="bi bi-pencil-square"></i></a>
+            <a href="javascript:void(0)" class="btn-delete" style="font-size: 20px; color: red;"><i class="bi bi-trash3-fill"></i></a>
         </div>
     `;
 
@@ -126,7 +133,6 @@ function actionEvents() {
         },
         'click .btn-delete': (event, value, row, index) => {
             deleteMember(row.id);
-            return;
         },
     }
 }
@@ -137,7 +143,7 @@ function genderFormatter(value, row, index, field) {
 
 function statusFormatter(value, row, index, field) {
     const className = row.status === 'active' ? 'text-green-500' : 'text-red-500';
-    return `<div class="${className}">${capitalizeFLetter(value)}</div>`
+    return `<div class="fw-bold ${className}">${capitalizeFLetter(value)}</div>`
 }
 
 function deleteMember(id) {
@@ -165,7 +171,7 @@ onMounted(() => {
         sidePagination: 'server',
         paginationVAlign: 'bottom',
         pageSize: 25,
-        pageList: "[25, 50, 75, 100]",
+        pageList: "[10, 25, 50, 100]",
         queryParams: queryParams,
 
     })

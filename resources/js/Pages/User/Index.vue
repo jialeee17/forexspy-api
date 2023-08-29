@@ -54,34 +54,41 @@ function columns() {
     return [
         {
             title: 'ID',
-            width: "20",
-            formatter: idFormatter
+            formatter: idFormatter,
         },
         {
             title: 'Name',
             field: 'name',
             sortable: true,
-            width: "270"
+            width: "25",
+            widthUnit: '%',
         },
         {
             title: 'Username',
             field: 'username',
             sortable: true,
+            width: "25",
+            widthUnit: '%',
         },
         {
             title: 'Email',
             field: 'email',
-            width: "270"
+            sortable: true,
+            width: "25",
+            widthUnit: '%',
         },
         {
             title: 'Status',
             field: 'status',
-            formatter: statusFormatter
+            align: 'center',
+            sortable: true,
+            formatter: statusFormatter,
         },
         {
             title: 'Action',
+            align: 'center',
             formatter: actionFormatter,
-            events: actionEvents()
+            events: actionEvents(),
         },
     ]
 }
@@ -94,7 +101,7 @@ function queryParams(params) {
 
 function statusFormatter(value, row, index, field) {
     const className = row.status === 'active' ? 'text-green-500' : 'text-red-500';
-    return `<div class="${className}">${capitalizeFLetter(value)}</div>`;
+    return `<div class="fw-bold ${className}">${capitalizeFLetter(value)}</div>`;
 }
 
 function idFormatter(value, row, index, field) {
@@ -103,10 +110,10 @@ function idFormatter(value, row, index, field) {
 
 function actionFormatter(value, row, index, field) {
     const buttons = `
-        <div class="flex justify-evenly">
-            <a href="javascript:void(0)" class="btn-edit" data-bs-toggle="modal" data-bs-target="#editModal" style="font-size: 22px; "><i class="bi bi-pencil-square"></i></a>
-            <a href="javascript:void(0)" class="btn-link" style="font-size: 22px; color: #2AABEE;"><i class="bi bi-telegram"></i></a>
-            <a href="javascript:void(0)" class="btn-delete" style="font-size: 22px; color: red;"><i class="bi bi-trash3-fill"></i></a>
+        <div class="d-flex justify-content-evenly align-items-center">
+            <a href="javascript:void(0)" class="btn-edit" data-bs-toggle="modal" data-bs-target="#editModal" style="font-size: 20px; "><i class="bi bi-pencil-square"></i></a>
+            <a href="javascript:void(0)" class="btn-link" style="font-size: 20px; color: #2AABEE;"><i class="bi bi-telegram"></i></a>
+            <a href="javascript:void(0)" class="btn-delete" style="font-size: 20px; color: red;"><i class="bi bi-trash3-fill"></i></a>
         </div>
     `;
 
@@ -120,11 +127,9 @@ function actionEvents() {
         },
         'click .btn-link': (event, value, row, index) => {
             console.log('Link Telegram Account');
-            return;
         },
         'click .btn-delete': (event, value, row, index) => {
             deleteUser(row.id);
-            return;
         },
     }
 }
@@ -154,7 +159,7 @@ onMounted(() => {
         sidePagination: 'server',
         paginationVAlign: 'bottom',
         pageSize: 25,
-        pageList: "[25, 50, 75, 100]",
+        pageList: "[10, 25, 50, 100]",
         queryParams: queryParams,
     })
 })
