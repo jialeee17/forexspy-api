@@ -11,29 +11,28 @@
                 <form @submit.prevent="submit" class="row g-3">
                     <div class="col-md-6">
                         <label for="name" class="form-label">Name</label>
-                        <input type="text" id="name" class="form-control" placeholder="Name" aria-label="Name"
-                            required v-model="form.name">
+                        <input type="text" id="name" class="form-control" placeholder="Name" aria-label="Name" v-model="form.name" required>
                         <div v-if="form.errors.name" class="text-danger">{{ form.errors.name }}</div>
                     </div>
                     <div class="col-md-6">
                         <label for="username" class="form-label">Username</label>
-                        <input type="text" id="username" class="form-control" placeholder="Username" aria-label="Username" required v-model="form.username">
+                        <input type="text" id="username" class="form-control" placeholder="Username" aria-label="Username" v-model="form.username" required>
                         <div v-if="form.errors.username" class="text-danger">{{ form.errors.username }}</div>
                     </div>
                     <div class="col-md-6">
                         <label for="email" class="form-label">Email</label>
-                        <input type="email" id="email" class="form-control" placeholder="Email" aria-label="Email" required v-model="form.email">
+                        <input type="email" id="email" class="form-control" placeholder="Email Address" aria-label="Email" v-model="form.email" required>
                         <div v-if="form.errors.email" class="text-danger">{{ form.errors.email }}</div>
                     </div>
                     <div class="col-md-6">
                         <label for="password" class="form-label">Password</label>
-                        <input type="password" id="password" class="form-control" placeholder="Password" aria-label="Password" required>
+                        <input type="password" id="password" class="form-control" placeholder="Password" aria-label="Password" v-model="form.password" required>
                         <div v-if="form.errors.password" class="text-danger">{{ form.errors.password }}</div>
                     </div>
                     <div class="col-md-6">
                         <label for="status" class="form-label">Status</label>
                         <div class="dropdown">
-                            <button class="btn btn-secondary dropdown-toggle" type="button"
+                            <button class="btn btn-outline-secondary dropdown-toggle" type="button"
                                 data-bs-toggle="dropdown" aria-expanded="false">
                                 {{ capitalizeFLetter(form.status) }}
                             </button>

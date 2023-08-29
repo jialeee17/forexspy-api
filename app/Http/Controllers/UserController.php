@@ -79,14 +79,18 @@ class UserController extends Controller
      */
     public function update(UpsertUserRequest $request, string $id)
     {
-        User::where('id', $id)
-            ->update([
-                'name' => $request->name,
-                'username' => $request->username,
-                'email' => $request->email,
-                'status' => $request->status,
-                // 'password' => Hash::make($request->password),
-            ]);
+        $user = User::findOrFail($id);
+
+        $user->name = $request->name;
+        $user->username = $request->username;
+        $user->email = $request->email;
+        $user->status = $request->status;
+
+        if (!empty($request->password)) {
+            $user->password = Hash::make($request->password);
+        }
+
+        $user->save();
 
         return to_route('users.index')->with('success', 'User updated successfully.');
     }
