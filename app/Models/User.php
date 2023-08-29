@@ -32,6 +32,7 @@ class User extends Authenticatable
         'username',
         'email',
         'password',
+        'status',
     ];
 
     /**
@@ -68,11 +69,11 @@ class User extends Authenticatable
     ];
 
     const STATUS_ACTIVE = 'active';
-    const STATUS_INACTIVE = 'inactive';
+    const STATUS_SUSPENDED = 'suspended';
 
     public static $status = [
         self::STATUS_ACTIVE,
-        self::STATUS_INACTIVE
+        self::STATUS_SUSPENDED
     ];
 
     /* -------------------------------------------------------------------------- */

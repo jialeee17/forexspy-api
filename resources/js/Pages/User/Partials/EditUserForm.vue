@@ -39,7 +39,7 @@
                                         <a class="dropdown-item" @click="onChange('active')">Active</a>
                                     </li>
                                     <li>
-                                        <a class="dropdown-item" @click="onChange('inactive')">Inactive</a>
+                                        <a class="dropdown-item" @click="onChange('suspended')">Suspended</a>
                                     </li>
                                 </ul>
                             </div>

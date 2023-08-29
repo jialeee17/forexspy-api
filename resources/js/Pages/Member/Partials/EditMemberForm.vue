@@ -60,7 +60,7 @@
                                 </button>
                                 <ul class="dropdown-menu">
                                     <li><a class="dropdown-item" @click="onStatusChange('active')">Active</a></li>
-                                    <li><a class="dropdown-item" @click="onStatusChange('inactive')">Inactive</a></li>
+                                    <li><a class="dropdown-item" @click="onStatusChange('suspended')">Suspended</a></li>
                                 </ul>
                             </div>
                         </div>
