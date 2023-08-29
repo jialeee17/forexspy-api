@@ -28,6 +28,8 @@ Route::middleware([
         return Inertia::render('Dashboard');
     })->name('dashboard');
 
-    Route::resource('users', UserController::class);
+    Route::resource('users', UserController::class)->except([
+        'show', 'edit'
+    ]);
     Route::resource('members', MemberController::class);
 });

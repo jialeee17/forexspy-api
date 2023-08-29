@@ -32,6 +32,7 @@ class User extends Authenticatable
         'username',
         'email',
         'password',
+        'status',
     ];
 
     /**
@@ -66,4 +67,20 @@ class User extends Authenticatable
     protected $appends = [
         'profile_photo_url',
     ];
+
+    const STATUS_ACTIVE = 'active';
+    const STATUS_SUSPENDED = 'suspended';
+
+    public static $status = [
+        self::STATUS_ACTIVE,
+        self::STATUS_SUSPENDED
+    ];
+
+    /* -------------------------------------------------------------------------- */
+    /*                                    Scope                                   */
+    /* -------------------------------------------------------------------------- */
+    public function scopeActive($query)
+    {
+        return $query->where('status', self::STATUS_ACTIVE);
+    }
 }

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Inertia\Inertia;
 use App\Models\Member;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use App\Repositories\MemberRepository;
@@ -44,6 +45,7 @@ class MemberController extends Controller
     public function store(UpsertMemberRequest $request)
     {
         Member::create([
+            'uuid' => (string) Str::uuid(),
             'username' => $request->username,
             'password' => Hash::make($request->password),
             'email' => $request->email,
@@ -52,9 +54,10 @@ class MemberController extends Controller
             'phone_number' => $request->phone_number,
             'date_of_birth' => $request->date_of_birth,
             'gender' => $request->gender,
+            'status' => $request->status,
         ]);
 
-        return to_route('members.index');
+        return to_route('members.index')->with('success', 'Member created successfully.');
     }
 
     /**
@@ -86,19 +89,24 @@ class MemberController extends Controller
      */
     public function update(UpsertMemberRequest $request, string $id)
     {
-        Member::where('id', $id)
-            ->update([
-                'username' => $request->username,
-                'password' => Hash::make($request->password),
-                'email' => $request->email,
-                'first_name' => $request->first_name,
-                'last_name' => $request->last_name,
-                'phone_number' => $request->phone_number,
-                'date_of_birth' => $request->date_of_birth,
-                'gender' => $request->gender,
-            ]);
+        $member = Member::findOrFail($id);
 
-        return to_route('members.index');
+        $member->username = $request->username;
+        $member->first_name = $request->first_name;
+        $member->last_name = $request->last_name;
+        $member->email = $request->email;
+        $member->phone_number = $request->phone_number;
+        $member->date_of_birth = $request->date_of_birth;
+        $member->gender = $request->gender;
+        $member->status = $request->status;
+
+        if (!empty($request->password)) {
+            $member->password = Hash::make($request->password);
+        }
+
+        $member->save();
+
+        return to_route('members.index')->with('success', 'Member updated successfully.');
     }
 
     /**
@@ -108,6 +116,6 @@ class MemberController extends Controller
     {
         Member::destroy($id);
 
-        return to_route('members.index');
+        return to_route('members.index')->with('success', 'Member deleted successfully.');
     }
 }

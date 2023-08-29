@@ -7,6 +7,7 @@ use Inertia\Inertia;
 use Illuminate\Http\Request;
 use App\Repositories\UserRepository;
 use Illuminate\Support\Facades\Hash;
+use App\Http\Requests\UpsertUserRequest;
 
 class UserController extends Controller
 {
@@ -22,11 +23,7 @@ class UserController extends Controller
      */
     public function index()
     {
-        $users = User::get();
-
-        return Inertia::render('User/Index', [
-            'users' => $users
-        ]);
+        return Inertia::render('User/Index');
     }
 
     /**
@@ -40,23 +37,17 @@ class UserController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(UpsertUserRequest $request)
     {
-        $request->validate([
-            'name' => ['required', 'string', 'max:50'],
-            'username' => ['required', 'string', 'max:50', 'unique:users'],
-            'email' => ['required', 'email', 'max:50', 'unique:users'],
-            'password' => ['required', 'string']
-        ]);
-
         User::create([
             'name' => $request->name,
             'username' => $request->username,
             'email' => $request->email,
             'password' => Hash::make($request->password),
+            'status' => $request->status,
         ]);
 
-        return to_route('users.index');
+        return to_route('users.index')->with('success', 'User created successfully.');
     }
 
     /**
@@ -64,11 +55,11 @@ class UserController extends Controller
      */
     public function show(string $id)
     {
-        $user = User::find($id);
+        // $user = User::find($id);
 
-        return Inertia::render('User/Show', [
-            'user' => $user
-        ]);
+        // return Inertia::render('User/Show', [
+        //     'user' => $user
+        // ]);
     }
 
     /**
@@ -76,34 +67,32 @@ class UserController extends Controller
      */
     public function edit(string $id)
     {
-        $user = User::find($id);
+        // $user = User::find($id);
 
-        return Inertia::render('User/Edit', [
-            'user' => $user
-        ]);
+        // return Inertia::render('User/Edit', [
+        //     'user' => $user
+        // ]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(UpsertUserRequest $request, string $id)
     {
-        $request->validate([
-            'name' => ['required', 'string', 'max:50'],
-            'username' => ['required', 'string', 'max:50', 'unique:users'],
-            'email' => ['required', 'email', 'max:50', 'unique:users'],
-            'password' => ['required', 'string']
-        ]);
+        $user = User::findOrFail($id);
 
-        User::where('id', $id)
-            ->update([
-                'name' => $request->name,
-                'username' => $request->username,
-                'email' => $request->email,
-                'password' => Hash::make($request->password),
-            ]);
+        $user->name = $request->name;
+        $user->username = $request->username;
+        $user->email = $request->email;
+        $user->status = $request->status;
 
-        return to_route('users.index');
+        if (!empty($request->password)) {
+            $user->password = Hash::make($request->password);
+        }
+
+        $user->save();
+
+        return to_route('users.index')->with('success', 'User updated successfully.');
     }
 
     /**
@@ -113,6 +102,6 @@ class UserController extends Controller
     {
         User::destroy($id);
 
-        return to_route('users.index');
+        return to_route('users.index')->with('success', 'User deleted successfully.');
     }
 }
