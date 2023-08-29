@@ -312,7 +312,9 @@ const logout = () => {
 
             <!-- Page Content -->
             <main>
-                <slot />
+                <div class="container">
+                    <slot />
+                </div>
             </main>
         </div>
     </div>

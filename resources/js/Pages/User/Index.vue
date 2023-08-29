@@ -1,14 +1,14 @@
 <template>
     <AppLayout title="Users">
         <template #header>
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+            <h2 class="fw-semibold fs-5 line-height-sm">
                 Users
             </h2>
         </template>
 
-        <div class="py-12">
-            <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg p-5">
-                <div class="pb-3 w-full flex justify-end">
+        <div class="py-12 px-4">
+            <div class="bg-white rounded shadow p-5">
+                <div class="d-flex justify-content-end mb-3">
                     <Link class="btn btn-primary" :href="route('users.create')" method="get" as="button">Create</Link>
                 </div>
                 <table id="table"></table>
