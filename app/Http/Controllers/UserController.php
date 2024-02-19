@@ -5,103 +5,32 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Inertia\Inertia;
 use Illuminate\Http\Request;
-use App\Repositories\UserRepository;
-use Illuminate\Support\Facades\Hash;
-use App\Http\Requests\UpsertUserRequest;
+use App\Enums\UserStatusesEnum;
 
 class UserController extends Controller
 {
-    private $userRepository;
-
-    public function __construct(UserRepository $userRepository)
+    public function editPassword(Request $request)
     {
-        $this->userRepository = $userRepository;
+        return Inertia::render('User/Users/Profiles/ChangePassword');
     }
 
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    public function settings()
     {
-        return Inertia::render('User/Index');
+        return Inertia::render('Settings/Index');
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function toggleStatus(Request $request, User $user)
     {
-        return Inertia::render('User/Create');
-    }
+        $message = $user->status === UserStatusesEnum::ACTIVE->value ?
+            'Account had deactivated' :
+            'Account had activated';
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(UpsertUserRequest $request)
-    {
-        User::create([
-            'name' => $request->name,
-            'username' => $request->username,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'status' => $request->status,
+        $user->update([
+            'status' => $user->status === UserStatusesEnum::ACTIVE->value ?
+                UserStatusesEnum::INACTIVE->value :
+                UserStatusesEnum::ACTIVE->value
         ]);
 
-        return to_route('users.index')->with('success', 'User created successfully.');
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        // $user = User::find($id);
-
-        // return Inertia::render('User/Show', [
-        //     'user' => $user
-        // ]);
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        // $user = User::find($id);
-
-        // return Inertia::render('User/Edit', [
-        //     'user' => $user
-        // ]);
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(UpsertUserRequest $request, string $id)
-    {
-        $user = User::findOrFail($id);
-
-        $user->name = $request->name;
-        $user->username = $request->username;
-        $user->email = $request->email;
-        $user->status = $request->status;
-
-        if (!empty($request->password)) {
-            $user->password = Hash::make($request->password);
-        }
-
-        $user->save();
-
-        return to_route('users.index')->with('success', 'User updated successfully.');
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        User::destroy($id);
-
-        return to_route('users.index')->with('success', 'User deleted successfully.');
+        return redirect()->back()->with('success', $message);
     }
 }

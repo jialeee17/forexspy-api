@@ -1,25 +1,40 @@
 <script setup>
-import { Head, Link, useForm } from '@inertiajs/vue3';
-import AuthenticationCard from '@/Components/AuthenticationCard.vue';
-import AuthenticationCardLogo from '@/Components/AuthenticationCardLogo.vue';
-import Checkbox from '@/Components/Checkbox.vue';
-import InputError from '@/Components/InputError.vue';
-import InputLabel from '@/Components/InputLabel.vue';
-import PrimaryButton from '@/Components/PrimaryButton.vue';
-import TextInput from '@/Components/TextInput.vue';
+import { onMounted, ref } from "vue";
+import { Head, Link, useForm } from "@inertiajs/vue3";
+import ArgonInput from "@/Components/ArgonInput.vue";
+import ArgonRadio from "@/Components/ArgonRadio.vue";
+import ArgonCheckbox from "@/Components/ArgonCheckbox.vue";
+import ArgonButton from "@/Components/ArgonButton.vue";
+import Datepicker from "@vuepic/vue-datepicker";
+import "@vuepic/vue-datepicker/dist/main.css";
+import background from "@/assets/img/backgrounds/background.svg";
+import logo from "@/assets/img/logo.png";
+
+const date = ref(new Date());
+const format = (date) => {
+    const day = date.getDate();
+    const month = date.getMonth() + 1;
+    const year = date.getFullYear();
+    return `${day}/${month}/${year}`;
+};
+
+const props = defineProps({
+    countries: Array,
+});
 
 const form = useForm({
-    name: '',
-    username: '',
-    email: '',
-    password: '',
-    password_confirmation: '',
-    terms: false,
+    name: "",
+    username: "",
+    email: "",
+    password: "",
+    password_confirmation: "",
+    // country: "",
+    // dob: date,
 });
 
 const submit = () => {
-    form.post(route('register'), {
-        onFinish: () => form.reset('password', 'password_confirmation'),
+    form.post(route("register"), {
+        onFinish: () => form.reset("password", "password_confirmation"),
     });
 };
 </script>
@@ -27,100 +42,134 @@ const submit = () => {
 <template>
     <Head title="Register" />
 
-    <AuthenticationCard>
-        <template #logo>
-            <AuthenticationCardLogo />
-        </template>
+    <main class="main-content main-content-bg mt-0">
+        <img
+            class="h-100 w-100 object-fill position-fixed"
+            :src="background"
+            alt="background"
+        />
+        <div class="page-header min-vh-100">
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-lg-4 col-md-7">
+                        <div class="text-center">
+                            <img
+                                class="mb-4"
+                                :src="logo"
+                                alt="logo"
+                                width="185"
+                            />
+                        </div>
+                        <div class="card z-index-0">
+                            <div class="card-body">
+                                <h5 class="card-header text-center">
+                                    Sign Up Now
+                                </h5>
+                                <form role="form" @submit.prevent="submit">
+                                    <argon-input
+                                        v-model="form.name"
+                                        id="name"
+                                        type="text"
+                                        placeholder="Name"
+                                        aria-label="Name"
+                                        :error="form.errors.name"
+                                        :message="form.errors.name"
+                                        required
+                                    />
 
-        <form @submit.prevent="submit">
-            <div>
-                <InputLabel for="name" value="Name" />
-                <TextInput
-                    id="name"
-                    v-model="form.name"
-                    type="text"
-                    class="mt-1 block w-full"
-                    required
-                    autofocus
-                    autocomplete="name"
-                />
-                <InputError class="mt-2" :message="form.errors.name" />
-            </div>
+                                    <argon-input
+                                        v-model="form.username"
+                                        id="username"
+                                        type="text"
+                                        placeholder="Username"
+                                        aria-label="Username"
+                                        :error="form.errors.username"
+                                        :message="form.errors.username"
+                                        required
+                                    />
 
-            <div class="mt-4">
-                <InputLabel for="username" value="Username" />
-                <TextInput
-                    id="username"
-                    v-model="form.username"
-                    type="text"
-                    class="mt-1 block w-full"
-                    required
-                    autocomplete="username"
-                />
-                <InputError class="mt-2" :message="form.errors.username" />
-            </div>
+                                    <argon-input
+                                        v-model="form.email"
+                                        id="email"
+                                        type="email"
+                                        placeholder="Email"
+                                        aria-label="Email"
+                                        :error="form.errors.email"
+                                        :message="form.errors.email"
+                                        required
+                                    />
 
-            <div class="mt-4">
-                <InputLabel for="email" value="Email" />
-                <TextInput
-                    id="email"
-                    v-model="form.email"
-                    type="email"
-                    class="mt-1 block w-full"
-                    required
-                    autocomplete="username"
-                />
-                <InputError class="mt-2" :message="form.errors.email" />
-            </div>
+                                    <argon-input
+                                        v-model="form.password"
+                                        id="password"
+                                        type="password"
+                                        placeholder="Password"
+                                        aria-label="Password"
+                                        :error="form.errors.password"
+                                        :message="form.errors.password"
+                                    />
 
-            <div class="mt-4">
-                <InputLabel for="password" value="Password" />
-                <TextInput
-                    id="password"
-                    v-model="form.password"
-                    type="password"
-                    class="mt-1 block w-full"
-                    required
-                    autocomplete="new-password"
-                />
-                <InputError class="mt-2" :message="form.errors.password" />
-            </div>
+                                    <argon-input
+                                        v-model="form.password_confirmation"
+                                        id="passwordConfirmation"
+                                        type="password"
+                                        required
+                                        placeholder="Password Confirmation"
+                                        aria-label="Password Confirmation"
+                                        :error="
+                                            form.errors.password_confirmation
+                                        "
+                                        :message="
+                                            form.errors.password_confirmation
+                                        "
+                                    />
 
-            <div class="mt-4">
-                <InputLabel for="password_confirmation" value="Confirm Password" />
-                <TextInput
-                    id="password_confirmation"
-                    v-model="form.password_confirmation"
-                    type="password"
-                    class="mt-1 block w-full"
-                    required
-                    autocomplete="new-password"
-                />
-                <InputError class="mt-2" :message="form.errors.password_confirmation" />
-            </div>
+                                    <!-- <argon-input
+                                        v-model="form.dob"
+                                        id="dateOfBirth"
+                                        type="date"
+                                        placeholder="Date of Birth"
+                                        aria-label="Date of Birth"
+                                        :error="form.errors.dob"
+                                        :message="form.errors.dob"
+                                        required
+                                    /> -->
 
-            <div v-if="$page.props.jetstream.hasTermsAndPrivacyPolicyFeature" class="mt-4">
-                <InputLabel for="terms">
-                    <div class="flex items-center">
-                        <Checkbox id="terms" v-model:checked="form.terms" name="terms" required />
+                                    <!-- <v-select
+                                        class="mb-3"
+                                        placeholder="Country"
+                                        :options="$page.props.countries"
+                                        :reduce="(country) => country.code"
+                                        label="country"
+                                        value="code"
+                                        v-model="form.country"
+                                    /> -->
 
-                        <div class="ml-2">
-                            I agree to the <a target="_blank" :href="route('terms.show')" class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Terms of Service</a> and <a target="_blank" :href="route('policy.show')" class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Privacy Policy</a>
+                                    <div class="text-center">
+                                        <argon-button
+                                            type="submit"
+                                            full-width
+                                            color="success"
+                                            class="mb-2"
+                                            >Sign up</argon-button
+                                        >
+                                    </div>
+
+                                    <p class="text-sm mt-3 mb-4 text-center">
+                                        Already have an account?
+                                        <Link
+                                            :href="route('login')"
+                                            class="text-success font-weight-bolder"
+                                        >
+                                            Sign in
+                                        </Link>
+                                    </p>
+                                </form>
+                            </div>
                         </div>
                     </div>
-                    <InputError class="mt-2" :message="form.errors.terms" />
-                </InputLabel>
+                </div>
             </div>
-
-            <div class="flex items-center justify-end mt-4">
-                <Link :href="route('login')" class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                    Already registered?
-                </Link>
-
-                <PrimaryButton class="ml-4" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
-                    Register
-                </PrimaryButton>
-            </div>
-        </form>
-    </AuthenticationCard>
+        </div>
+    </main>
 </template>

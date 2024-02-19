@@ -1,10 +1,12 @@
 <?php
 
 use Inertia\Inertia;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Foundation\Application;
+use App\Http\Controllers\Admin\AuthController;
+use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\UserController;
-use App\Http\Controllers\MemberController;
 
 /*
 |--------------------------------------------------------------------------
@@ -19,17 +21,50 @@ use App\Http\Controllers\MemberController;
 
 Route::webhooks('webhooks');
 
-Route::middleware([
-    'auth:sanctum',
-    config('jetstream.auth_session'),
-    'verified',
-])->group(function () {
-    Route::get('/', function () {
-        return Inertia::render('Dashboard');
-    })->name('dashboard');
+Route::middleware(['guest'])->get('admin/login', [AuthController::class, 'login'])->name('admin.login');
 
-    Route::resource('users', UserController::class)->except([
-        'show', 'edit'
-    ]);
-    Route::resource('members', MemberController::class);
+Route::middleware(['auth', 'verified', config('jetstream.auth_session')])->group(function () {
+    // * Shared Routes
+    Route::prefix('users')
+        ->name('user.')
+        ->group(function () {
+            // Route::prefix('profiles')
+            //     ->name('profile.')->group(function () {
+            //         Route::get('/', function () {
+            //             return Inertia::render('User/Users/Profiles/UserProfile');
+            //         })->name('index');
+
+            //         Route::get('/edit', function () {
+            //             return Inertia::render('User/Users/Profiles/EditProfile');
+            //         })->name('edit');
+            //     });
+
+            Route::get('/edit-password', [UserController::class, 'editPassword'])->name('password.edit');
+            Route::put('/{user}/toggle-status', [UserController::class, 'toggleStatus'])->name('toggleStatus');
+            Route::get('/settings', [UserController::class, 'settings'])->name('setting.index');
+        });
+
+    // * Admin Routes
+    Route::middleware(['role:super-admin|admin'])
+        ->prefix('admin')
+        ->name('admin.')
+        ->group(function () {
+            Route::get('/', function () {
+                return Inertia::render('Admin/Dashboard/Index');
+            })->name('dashboard');
+
+            // Settings
+            Route::prefix('settings')->name('setting.')->group(function () {
+                Route::get('/', [SettingController::class, 'edit'])->name('edit');
+                Route::put('/', [SettingController::class, 'update'])->name('update');
+            });
+        });
+
+    // * Customer Routes
+    Route::middleware(['role:customer'])
+        ->group(function () {
+            Route::get('/', function (Request $request) {
+                return Inertia::render('User/Dashboard/Index');
+            })->name('dashboard');
+        });
 });

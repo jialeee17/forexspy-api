@@ -21,7 +21,7 @@
 
 <script setup>
 import { ref, onMounted, reactive } from 'vue'
-import { Link, router } from '@inertiajs/vue3'
+import { Link, router } from "@inertiajs/vue3";
 import AppLayout from '@/Layouts/AppLayout.vue'
 import EditUserForm from '@/Pages/User/Partials/EditUserForm.vue'
 import { showSuccessToast, showErrorToast } from '../../../helpers/ToastHelper'
@@ -160,17 +160,17 @@ function deleteUser(id) {
 }
 
 onMounted(() => {
-    table.value = $('#table').bootstrapTable({
-        ajax: ajaxRequest,
-        columns: columns(),
-        rowStyle: rowStyle,
-        pagination: true,
-        sidePagination: 'server',
-        paginationVAlign: 'bottom',
-        pageSize: 25,
-        pageList: "[10, 25, 50, 100]",
-        queryParams: queryParams,
-    })
+    // table.value = $('#table').bootstrapTable({
+    //     ajax: ajaxRequest,
+    //     columns: columns(),
+    //     rowStyle: rowStyle,
+    //     pagination: true,
+    //     sidePagination: 'server',
+    //     paginationVAlign: 'bottom',
+    //     pageSize: 25,
+    //     pageList: "[10, 25, 50, 100]",
+    //     queryParams: queryParams,
+    // })
 })
 </script>
 

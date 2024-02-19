@@ -1,14 +1,14 @@
 <script setup>
 import { ref, computed, watch } from 'vue';
-import { router, useForm, usePage } from '@inertiajs/vue3';
-import ActionSection from '@/Components/ActionSection.vue';
-import ConfirmsPassword from '@/Components/ConfirmsPassword.vue';
-import DangerButton from '@/Components/DangerButton.vue';
-import InputError from '@/Components/InputError.vue';
-import InputLabel from '@/Components/InputLabel.vue';
-import PrimaryButton from '@/Components/PrimaryButton.vue';
-import SecondaryButton from '@/Components/SecondaryButton.vue';
-import TextInput from '@/Components/TextInput.vue';
+import { useForm, usePage, router } from '@inertiajs/vue3';
+import ActionSection from '@/Components/Jetstream/ActionSection.vue';
+import ConfirmsPassword from '@/Components/Jetstream/ConfirmsPassword.vue';
+import DangerButton from '@/Components/Jetstream/DangerButton.vue';
+import InputError from '@/Components/Jetstream/InputError.vue';
+import InputLabel from '@/Components/Jetstream/InputLabel.vue';
+import PrimaryButton from '@/Components/Jetstream/PrimaryButton.vue';
+import SecondaryButton from '@/Components/Jetstream/SecondaryButton.vue';
+import TextInput from '@/Components/Jetstream/TextInput.vue';
 
 const props = defineProps({
     requiresConfirmation: Boolean,
@@ -26,7 +26,7 @@ const confirmationForm = useForm({
 });
 
 const twoFactorEnabled = computed(
-    () => ! enabling.value && usePage().props.auth.user?.two_factor_enabled,
+    () => ! enabling.value && usePage().props.value.user?.two_factor_enabled,
 );
 
 watch(twoFactorEnabled, () => {
@@ -39,7 +39,7 @@ watch(twoFactorEnabled, () => {
 const enableTwoFactorAuthentication = () => {
     enabling.value = true;
 
-    router.post(route('two-factor.enable'), {}, {
+    router.post('/user/two-factor-authentication', {}, {
         preserveScroll: true,
         onSuccess: () => Promise.all([
             showQrCode(),
@@ -54,25 +54,25 @@ const enableTwoFactorAuthentication = () => {
 };
 
 const showQrCode = () => {
-    return axios.get(route('two-factor.qr-code')).then(response => {
+    return axios.get('/user/two-factor-qr-code').then(response => {
         qrCode.value = response.data.svg;
     });
 };
 
 const showSetupKey = () => {
-    return axios.get(route('two-factor.secret-key')).then(response => {
+    return axios.get('/user/two-factor-secret-key').then(response => {
         setupKey.value = response.data.secretKey;
     });
 }
 
 const showRecoveryCodes = () => {
-    return axios.get(route('two-factor.recovery-codes')).then(response => {
+    return axios.get('/user/two-factor-recovery-codes').then(response => {
         recoveryCodes.value = response.data;
     });
 };
 
 const confirmTwoFactorAuthentication = () => {
-    confirmationForm.post(route('two-factor.confirm'), {
+    confirmationForm.post('/user/confirmed-two-factor-authentication', {
         errorBag: "confirmTwoFactorAuthentication",
         preserveScroll: true,
         preserveState: true,
@@ -86,14 +86,14 @@ const confirmTwoFactorAuthentication = () => {
 
 const regenerateRecoveryCodes = () => {
     axios
-        .post(route('two-factor.recovery-codes'))
+        .post('/user/two-factor-recovery-codes')
         .then(() => showRecoveryCodes());
 };
 
 const disableTwoFactorAuthentication = () => {
     disabling.value = true;
 
-    router.delete(route('two-factor.disable'), {
+    router.delete('/user/two-factor-authentication', {
         preserveScroll: true,
         onSuccess: () => {
             disabling.value = false;
@@ -144,9 +144,9 @@ const disableTwoFactorAuthentication = () => {
                         </p>
                     </div>
 
-                    <div class="mt-4 p-2 inline-block bg-white" v-html="qrCode" />
+                    <div class="mt-4" v-html="qrCode" />
 
-                    <div v-if="setupKey" class="mt-4 max-w-xl text-sm text-gray-600">
+                    <div class="mt-4 max-w-xl text-sm text-gray-600" v-if="setupKey">
                         <p class="font-semibold">
                             Setup Key: <span v-html="setupKey"></span>
                         </p>

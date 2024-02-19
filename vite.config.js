@@ -5,7 +5,10 @@ import vue from '@vitejs/plugin-vue';
 export default defineConfig({
     plugins: [
         laravel({
-            input: 'resources/js/app.js',
+            input: [
+                "resources/js/app.js",
+                "resources/scss/app.scss"
+            ],
             refresh: true,
         }),
         vue({
@@ -17,4 +20,14 @@ export default defineConfig({
             },
         }),
     ],
+    ssr: {
+        noExternal: ["@inertiajs/server"],
+    },
+    server: {
+        https: process.env.APP_ENV === "production",
+        host: "0.0.0.0",
+        hmr: {
+            host: "localhost",
+        },
+    },
 });

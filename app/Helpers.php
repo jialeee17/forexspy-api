@@ -4,7 +4,6 @@ namespace App;
 
 class Helper
 {
-
     public static function getCommandList($commands)
     {
         $list = [];

@@ -1,0 +1,28 @@
+// Country Dropdown Menu //
+.v-select .vs__dropdown-toggle,
+.v-select .vs__dropdown-menu {
+    font-size: 0.875rem;
+    padding: 0.15rem 0.2rem 0.45rem 0.2rem;
+    border-radius: 8px;
+    border: 1px solid #d2d6da;
+}
+
+.v-select .vs__search::placeholder {
+    font-size: 0.875rem;
+    color: #adb5bd;
+}
+
+// Custom Booking
+.navbar-vertical.navbar-expand-xs {
+    z-index: 999 !important;
+}
+
+@media (min-width: 640px) {
+    .choices__list--dropdown .choices__item--selectable {
+        padding-right: 0px !important;
+    }
+}
+
+
+
+

@@ -1,9 +1,7 @@
 <?php
 
-use App\Http\Controllers\API\MemberController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\API\UserController;
 use App\Http\Controllers\API\TelegramUserController;
 
 /*
@@ -19,18 +17,4 @@ use App\Http\Controllers\API\TelegramUserController;
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
-});
-
-Route::prefix('users')->name('users.')->group(function () {
-    Route::get('/list', [UserController::class, 'list'])->name('list');
-    Route::get('/details/{id}', [UserController::class, 'details'])->name('details');
-});
-
-Route::prefix('telegram-users')->name('telegramUsers.')->group(function () {
-    Route::get('/list', [TelegramUserController::class, 'list'])->name('list');
-});
-
-Route::prefix('members')->name('members.')->group(function () {
-    Route::get('/list', [MemberController::class, 'list'])->name('list');
-    Route::get('/details/{id}', [MemberController::class, 'details'])->name('details');
 });
