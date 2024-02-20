@@ -104,7 +104,9 @@ const menu = computed(() => {
 });
 
 const logout = () => {
-  router.post(route("logout"));
+  const isAdmin = route().current('admin.*');
+
+  router.post(route("logout"), { is_admin: isAdmin });
 };
 
 const hideSideNav = (event) => {

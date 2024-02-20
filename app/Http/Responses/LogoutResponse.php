@@ -11,8 +11,9 @@ class LogoutResponse implements LogoutResponseContract
 
     public function toResponse($request)
     {
+        // https://stackoverflow.com/questions/65822861/laravel-fortify-logout-redirect
         return $request->wantsJson()
             ? new JsonResponse('', 204)
-            : redirect()->intended(route('login'));
+            : redirect()->intended($request->is_admin ? route('admin.login') : route('login'));
     }
 }

@@ -32,10 +32,10 @@ class JetstreamServiceProvider extends ServiceProvider
         );
 
         // register new LogoutResponse
-        // $this->app->singleton(
-        //     \Laravel\Fortify\Contracts\LogoutResponse::class,
-        //     \App\Http\Responses\LogoutResponse::class
-        // );
+        $this->app->singleton(
+            \Laravel\Fortify\Contracts\LogoutResponse::class,
+            \App\Http\Responses\LogoutResponse::class
+        );
     }
 
     /**
