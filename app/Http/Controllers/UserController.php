@@ -9,14 +9,19 @@ use App\Enums\UserStatusesEnum;
 
 class UserController extends Controller
 {
+    public function profile(Request $request)
+    {
+        return Inertia::render('Profile/Show');
+    }
+
     public function editPassword(Request $request)
     {
-        return Inertia::render('User/Users/Profiles/ChangePassword');
+        return Inertia::render('Profile/ChangePassword');
     }
 
     public function settings()
     {
-        return Inertia::render('Settings/Index');
+        return Inertia::render('Profile/Settings');
     }
 
     public function toggleStatus(Request $request, User $user)

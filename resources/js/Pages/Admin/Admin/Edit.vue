@@ -38,7 +38,7 @@
 </template>
   
 <script setup>
-import AppLayout from '@/Layouts/Admin/AppLayout.vue';
+import AppLayout from '@/Layouts/AppLayout.vue';
 import ArgonInput from "@/Components/ArgonInput.vue";
 import ArgonButton from "@/Components/ArgonButton.vue";
 import { onMounted } from "vue";

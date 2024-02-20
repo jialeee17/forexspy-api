@@ -117,7 +117,7 @@
 </template>
 
 <script setup>
-import AppLayout from "@/Layouts/Admin/AppLayout.vue";
+import AppLayout from "@/Layouts/AppLayout.vue";
 import MiniStatisticsCard from "@/Components/Cards/MiniStatisticsCard.vue";
 import DateRange from "@/Components/DateRange.vue";
 import { Link } from "@inertiajs/vue3";

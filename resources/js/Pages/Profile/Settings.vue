@@ -13,7 +13,7 @@
 </template>
 
 <script setup>
-import AppLayout from "@/Layouts/User/AppLayout.vue";
-import Connections from "@/Pages/Settings/Partials/Connections.vue";
-import DeleteAccount from "@/Pages/Settings/Partials/DeleteAccount.vue";
+import AppLayout from "@/Layouts/AppLayout.vue";
+import Connections from "@/Pages/Profile/Partials/Connections.vue";
+import DeleteAccount from "@/Pages/Profile/Partials/DeleteAccount.vue";
 </script>

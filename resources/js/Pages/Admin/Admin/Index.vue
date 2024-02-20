@@ -57,7 +57,7 @@ import { DataTable } from "simple-datatables";
 import { Link, router } from "@inertiajs/vue3";
 import swal from "sweetalert2";
 import ArgonButton from "@/Components/ArgonButton.vue";
-import AppLayout from "@/Layouts/Admin/AppLayout.vue";
+import AppLayout from "@/Layouts/AppLayout.vue";
 import { useToast } from "vue-toastification";
 import { useAttrs } from "vue";
 

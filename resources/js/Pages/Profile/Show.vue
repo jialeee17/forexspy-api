@@ -1,6 +1,5 @@
 <script setup>
-import UserAppLayout from "@/Layouts/User/AppLayout.vue";
-import AdminAppLayout from "@/Layouts/Admin/AppLayout.vue";
+import AppLayout from "@/Layouts/AppLayout.vue";
 import DeleteUserForm from "@/Pages/Profile/Partials/DeleteUserForm.vue";
 import LogoutOtherBrowserSessionsForm from "@/Pages/Profile/Partials/LogoutOtherBrowserSessionsForm.vue";
 import SectionBorder from "@/Components/Jetstream/SectionBorder.vue";
@@ -15,20 +14,11 @@ defineProps({
 </script>
 
 <template>
-    <!-- TODO: if current authenticated is customer... -->
-    <UserAppLayout v-if="true" title="Profile">
+    <AppLayout title="Profile">
         <div v-if="$page.props.jetstream.canUpdateProfileInformation">
             <UpdateProfileInformationForm :user="$page.props.auth.user" />
 
             <SectionBorder />
         </div>
-    </UserAppLayout>
-
-    <AdminAppLayout v-else title="Profile">
-        <div v-if="$page.props.jetstream.canUpdateProfileInformation">
-            <UpdateProfileInformationForm :user="$page.props.auth.user" />
-
-            <SectionBorder />
-        </div>
-    </AdminAppLayout>
+    </AppLayout>
 </template>

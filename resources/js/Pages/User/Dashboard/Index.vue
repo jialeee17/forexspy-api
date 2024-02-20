@@ -4,12 +4,12 @@
             <div class="row">
                 <div class="col-lg-12">
                     <!-- 4 Statistic Cards -->
-                    <div class="row" v-if="stats">
+                    <div class="row">
                         <div class="col-lg-3 col-md-6 col-12">
                             <mini-statistics-card
                                 title="Portfolio"
-                                :value="$filters.currency(stats.portfolio ?? 0)"
-                                :percentage="stats.diff_portfolio"
+                                :value="$filters.currency(0)"
+                                :percentage="0"
                                 :icon="{
                                     component: 'ni ni-money-coins',
                                     background: 'bg-gradient-primary',
@@ -20,8 +20,8 @@
                         <div class="col-lg-3 col-md-6 col-12">
                             <mini-statistics-card
                                 title="Profit"
-                                :value="$filters.currency(stats.profit ?? 0)"
-                                :percentage="stats.diff_profit"
+                                :value="$filters.currency(0)"
+                                :percentage="0"
                                 :icon="{
                                     component: 'ni ni-briefcase-24',
                                     background: 'bg-gradient-primary',
@@ -32,12 +32,8 @@
                         <div class="col-lg-3 col-md-6 col-12">
                             <mini-statistics-card
                                 title="Internal Wallet"
-                                :value="
-                                    $filters.currency(
-                                        stats.internal_wallet ?? 0
-                                    )
-                                "
-                                :percentage="stats.diff_internal_wallet"
+                                :value="$filters.currency(0)"
+                                :percentage="0"
                                 :icon="{
                                     component: 'ni ni-credit-card',
                                     background: 'bg-gradient-primary',
@@ -48,12 +44,8 @@
                         <div class="col-lg-3 col-md-6 col-12">
                             <mini-statistics-card
                                 title="TOTAL INVESTED"
-                                :value="
-                                    $filters.currency(
-                                        stats.invested_amount ?? 0
-                                    )
-                                "
-                                :percentage="stats.diff_invested_amount"
+                                :value="$filters.currency(0)"
+                                :percentage="0"
                                 :icon="{
                                     component: 'ni ni-chart-bar-32',
                                     background: 'bg-gradient-primary',
@@ -62,22 +54,6 @@
                             />
                         </div>
                     </div>
-
-                    <!-- Performance Line Chart -->
-                    <!-- <div class="row mt-1">
-                        <div class="col-lg-12 mb-lg">
-                            <gradient-line-chart id="chart-line" title="Performance"
-                                :return_rate="performance.percentage !== 0 ? performance.percentage : 0" :chart="{
-                                    labels: performance.title,
-                                    datasets: [
-                                        {
-                                            label: '',
-                                            data: performance.graph,
-                                        },
-                                    ],
-                                }" :class="performance.graph.length > 0 ? '' : 'overlay'" />
-                        </div>
-                    </div> -->
 
                     <!-- Investment Line Charts-->
                     <div class="row mt-4">
@@ -328,7 +304,7 @@
 
 <script setup>
 import { reactive, ref, watch } from "vue";
-import AppLayout from "@/Layouts/User/AppLayout.vue";
+import AppLayout from "@/Layouts/AppLayout.vue";
 import MiniStatisticsCard from "@/Components/Cards/MiniStatisticsCard.vue";
 import GradientLineChart from "@/Components/Charts/GradientLineChart.vue";
 import CopyTraderCard from "@/Components/Cards/CopyTraderCard.vue";

@@ -55,7 +55,7 @@
 <script setup>
 import ArgonInput from "@/Components/ArgonInput.vue";
 import ArgonButton from "@/Components/ArgonButton.vue";
-import AppLayout from "@/Layouts/Admin/AppLayout.vue";
+import AppLayout from "@/Layouts/AppLayout.vue";
 import { onMounted, ref } from "vue";
 import Choices from "choices.js";
 import { useForm } from "@inertiajs/vue3";

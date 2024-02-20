@@ -24,26 +24,6 @@ Route::webhooks('webhooks');
 Route::middleware(['guest'])->get('admin/login', [AuthController::class, 'login'])->name('admin.login');
 
 Route::middleware(['auth', 'verified', config('jetstream.auth_session')])->group(function () {
-    // * Shared Routes
-    Route::prefix('users')
-        ->name('user.')
-        ->group(function () {
-            // Route::prefix('profiles')
-            //     ->name('profile.')->group(function () {
-            //         Route::get('/', function () {
-            //             return Inertia::render('User/Users/Profiles/UserProfile');
-            //         })->name('index');
-
-            //         Route::get('/edit', function () {
-            //             return Inertia::render('User/Users/Profiles/EditProfile');
-            //         })->name('edit');
-            //     });
-
-            Route::get('/edit-password', [UserController::class, 'editPassword'])->name('password.edit');
-            Route::put('/{user}/toggle-status', [UserController::class, 'toggleStatus'])->name('toggleStatus');
-            Route::get('/settings', [UserController::class, 'settings'])->name('setting.index');
-        });
-
     // * Admin Routes
     Route::middleware(['role:super-admin|admin'])
         ->prefix('admin')
@@ -53,11 +33,9 @@ Route::middleware(['auth', 'verified', config('jetstream.auth_session')])->group
                 return Inertia::render('Admin/Dashboard/Index');
             })->name('dashboard');
 
-            // Settings
-            Route::prefix('settings')->name('setting.')->group(function () {
-                Route::get('/', [SettingController::class, 'edit'])->name('edit');
-                Route::put('/', [SettingController::class, 'update'])->name('update');
-            });
+            Route::get('/profile', [UserController::class, 'profile'])->name('profile.show');
+            Route::get('/edit-password', [UserController::class, 'editPassword'])->name('password.edit');
+            Route::get('/settings', [UserController::class, 'settings'])->name('setting.show');
         });
 
     // * Customer Routes
@@ -66,5 +44,13 @@ Route::middleware(['auth', 'verified', config('jetstream.auth_session')])->group
             Route::get('/', function (Request $request) {
                 return Inertia::render('User/Dashboard/Index');
             })->name('dashboard');
+
+            Route::prefix('users')
+                ->name('user.')
+                ->group(function () {
+                    Route::get('/edit-password', [UserController::class, 'editPassword'])->name('password.edit');
+                    Route::put('/{user}/toggle-status', [UserController::class, 'toggleStatus'])->withoutMiddleware(['role:customer'])->name('toggleStatus');
+                    Route::get('/settings', [UserController::class, 'settings'])->name('setting.show');
+                });
         });
 });
