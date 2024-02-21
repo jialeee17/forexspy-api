@@ -4,7 +4,7 @@ namespace Database\Seeders;
 
 use Carbon\Carbon;
 use App\Models\User;
-use Ramsey\Uuid\Uuid;
+use Illuminate\Support\Str;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
@@ -22,6 +22,7 @@ class UserSeeder extends Seeder
 
         if (empty($superAdmin)) {
             $superAdmin = User::factory()->createQuietly([
+                'uuid' => (string) Str::uuid(),
                 'name' => 'Super Admin',
                 'username' => 'superadmin',
                 'email' => "superadmin@fmt.com",
