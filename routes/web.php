@@ -19,7 +19,8 @@ use App\Http\Controllers\UserController;
 |
 */
 
-Route::webhooks('webhooks');
+Route::webhooks('webhooks/trade-history-received');
+Route::webhooks('webhooks/new-trade-received');
 
 Route::middleware(['guest'])->get('admin/login', [AuthController::class, 'login'])->name('admin.login');
 
