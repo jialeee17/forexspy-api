@@ -1,4 +1,6 @@
 <template>
+    <Head title="Dashboard" />
+
     <AppLayout>
         <div class="container-fluid py-4">
             <div class="row">
@@ -120,5 +122,5 @@
 import AppLayout from "@/Layouts/AppLayout.vue";
 import MiniStatisticsCard from "@/Components/Cards/MiniStatisticsCard.vue";
 import DateRange from "@/Components/DateRange.vue";
-import { Link } from "@inertiajs/vue3";
+import { Head, Link } from "@inertiajs/vue3";
 </script>
