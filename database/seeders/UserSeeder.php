@@ -21,7 +21,7 @@ class UserSeeder extends Seeder
         $superAdmin = User::firstWhere('username', 'superadmin');
 
         if (empty($superAdmin)) {
-            $superAdmin = User::createQuietly([
+            $superAdmin = User::factory()->createQuietly([
                 'uuid' => (string) Str::uuid(),
                 'name' => 'Super Admin',
                 'username' => 'superadmin',
