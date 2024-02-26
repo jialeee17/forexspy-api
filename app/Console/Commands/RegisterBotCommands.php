@@ -6,7 +6,7 @@ use App\Models\TelegraphBot;
 use Illuminate\Console\Command;
 use App\Helper;
 
-class RegisterTelegraphCommands extends Command
+class RegisterBotCommands extends Command
 {
     /**
      * The name and signature of the console command.
@@ -38,6 +38,7 @@ class RegisterTelegraphCommands extends Command
 
         $commands = config('botcommands');
 
+        $bot->unregisterCommands()->send();
         $bot->registerCommands(Helper::getCommandList($commands))->send();
     }
 }
