@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-class ChatService
+class ChatMessageService
 {
     public static function createUser($id)
     {
@@ -144,14 +144,7 @@ class ChatService
         return $message;
     }
 
-    public static function userNotFound()
-    {
-        $message = __('telegram.user.not_found');
-
-        return $message;
-    }
-
-    public static function userExisted($id)
+    public static function existingUser($id)
     {
         $message = __('telegram.message.account_existed') . "\n\n"
             . __('telegram.user.id') . ": <code>$id</code>\n\n"
@@ -161,23 +154,9 @@ class ChatService
         return $message;
     }
 
-    public static function accountNotFound()
-    {
-        $message = __('telegram.message.mt_account_not_available');
-
-        return $message;
-    }
-
     public static function selectAccount()
     {
         $message = __('telegram.message.select_account');
-
-        return $message;
-    }
-
-    public static function error()
-    {
-        $message = __('telegram.message.error');
 
         return $message;
     }

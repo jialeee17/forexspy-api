@@ -45,13 +45,11 @@ return [
         'feel_free_to_ask' => 'If you need any assistance or have questions, feel free to ask. Happy trading!',
         'new_community' => 'You are now part of ForexSpy\'s community. Stay tuned for exciting updates, market insights, and trading tips!',
         'old_community' => 'You are already part of ForexSpy\'s community with the provided account details above.',
-        'error' => 'Oops! Something went wrong while processing your request. Please try again later.',
         'account_create_success' => '🎉 Congratulations! Your account has been successfully created!',
         'account_existed' => '⚠️ Oops! It looks like you already have an existing account.',
         'unknown_command' => 'Sorry, I can\'t understand your command: :command',
         'select_account' => 'Please select an account:',
         'open_trade_success' => 'Trade opened successfully! You\'ve entered a new position.',
         'close_trade_success' => 'Trade closed successfully! Your position has been exited.',
-        'mt_account_not_available' => 'Your account are unavailable. Please try again later.'
     ],
 ];

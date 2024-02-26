@@ -11,8 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('mt_accounts', function (Blueprint $table) {
-            $table->boolean('initial_summary_notified')->default(false)->after('profit_all_time');
+        Schema::table('telegraph_chats', function (Blueprint $table) {
+            $table->foreignUuid('user_uuid')->nullable()->after('telegraph_bot_id')->references('uuid')->on('users');
         });
     }
 
@@ -21,8 +21,9 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('mt_accounts', function (Blueprint $table) {
-            $table->dropColumn('initial_summary_notified');
+        Schema::table('telegraph_chats', function (Blueprint $table) {
+            $table->dropForeign(['user_uuid']);
+            $table->dropColumn('user_uuid');
         });
     }
 };

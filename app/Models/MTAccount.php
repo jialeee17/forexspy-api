@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -11,26 +10,43 @@ class MTAccount extends Model
 {
     use HasFactory;
 
-    use SoftDeletes;
+    protected $table = 'accounts';
 
-    protected $table = 'mt_accounts';
+    protected $connection = 'forexspy_data';
 
     protected $fillable = [
         'login_id',
-        'telegram_user_uuid',
-        'name',
-        'currency',
+        'forexspy_user_uuid',
+        'trade_mode',
+        'leverage',
+        'limit_orders',
+        'margin_so_mode',
+        'is_trade_allowed',
+        'is_trade_expert',
         'balance',
+        'credit',
+        'profit',
         'equity',
+        'margin',
+        'margin_free',
         'margin_level',
+        'margin_so_call',
+        'margin_so_so',
+        'margin_initial',
+        'margin_maintenance',
+        'assets',
+        'liabilities',
+        'commission_blocked',
         'highest_drawdown_amount',
         'highest_drawdown_percentage',
-        'floating',
         'active_pairs',
         'active_orders',
         'profit_today',
         'profit_all_time',
-        'initial_summary_notified',
+        'name',
+        'server',
+        'currency',
+        'company'
     ];
 
     protected $casts = [
@@ -44,6 +60,6 @@ class MTAccount extends Model
     /* -------------------------------------------------------------------------- */
     public function user(): BelongsTo
     {
-        return $this->belongsTo(TelegramUser::class, 'telegram_user_uuid', 'uuid');
+        return $this->belongsTo(User::class, 'forexspy_user_uuid', 'uuid');
     }
 }

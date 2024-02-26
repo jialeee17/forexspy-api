@@ -9,8 +9,6 @@ use DefStudio\Telegraph\Models\TelegraphBot as BaseModel;
 
 class TelegraphBot extends BaseModel
 {
-    // use HasFactory;
-
     protected $fillable = [
         'token',
         'name'

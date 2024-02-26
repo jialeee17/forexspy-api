@@ -6,15 +6,16 @@ return [
      * command_category' => ['command_name' => 'command_description']
      */
     'main' => [
-        'newuser' => 'Register a new user',
+        'new_user' => 'Register a new user',
     ],
     'user' => [
-        'myid' => 'Retrieve user ID',
-        'myaccount' => 'Retrieve details about your account',
+        'my_id' => 'Retrieve user ID',
+        'my_account' => 'Retrieve details about your account',
+        'connect' => 'Connect to your ForexSpy account',
     ],
     'reports' => [
-        'newtrades' => 'Retrieve reports on your recent new trades',
-        'closedtrades' => 'Retrieve reports on your recent closed trades',
-        'summary' => 'Get an overview of your account',
+        'view_open_trades' => 'Retrieve reports on your recent open trades',
+        'view_closed_trades' => 'Retrieve reports on your recent closed trades',
+        'view_summary' => 'Get an overview of your account',
     ],
 ];
