@@ -108,8 +108,17 @@ class WebhookHandler extends \DefStudio\Telegraph\Handlers\WebhookHandler
 
     public function connect()
     {
-        $this->chat->storage()->set('process_acc_connection', 1);
-        $this->chat->html('Enter your ForexSpy ID')->send();
+        // Act as Middleware
+        $this->deleteStorageData(self::STORAGE_DATA_LIST);
+
+        if (empty($this->chat->user_uuid)) {
+            $message = 'Please provide your User ID to connect your Telegram account';
+            $this->chat->storage()->set('process_acc_connection', 1);
+        } else {
+            $message = 'Your Telegram account is already linked to a ' . env('APP_NAME', 'platform') . ' account.';
+        }
+
+        $this->chat->html($message)->send();
     }
 
     public function view_open_trades()
@@ -404,6 +413,8 @@ class WebhookHandler extends \DefStudio\Telegraph\Handlers\WebhookHandler
         $user = User::firstWhere('uuid', $text);
         $this->chat->user_uuid = $user->uuid;
         $this->chat->save();
+
+        $this->chat->html('Your Telegram account has been successfully linked to your ' . env('APP_NAME', 'platform') .  ' account. Enjoy using our services directly from Telegram!')->send();
 
         // Clear Stored Data
         $this->chat->storage()->forget('process_acc_connection');
