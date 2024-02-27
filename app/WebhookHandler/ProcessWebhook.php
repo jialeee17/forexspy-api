@@ -2,48 +2,91 @@
 
 namespace App\WebhookHandler;
 
-use App\Jobs\ProcessAccountNotification;
-use Exception;
+use Throwable;
+use App\Models\Trade;
+use App\Models\TelegraphChat;
 use Illuminate\Support\Facades\Log;
-use App\Jobs\ProcessOpenTradeNotification;
-use App\Jobs\ProcessCloseTradeNotification;
-use App\Models\MTAccount;
+use App\Services\ChatMessageService;
 use Spatie\WebhookClient\Jobs\ProcessWebhookJob as SpatieProcessWebhookJob;
 
 class ProcessWebhook extends SpatieProcessWebhookJob
 {
     public function handle()
     {
-        try {
-            $webhook = json_decode($this->webhookCall, true); // contains an instance of `WebhookCall`
+        $webhookCall = json_decode($this->webhookCall);
+        $data = $webhookCall->payload;
+        $event = $data->event ?? null;
+        $userUuid = $data->forexspy_user_uuid ?? null;
+        $mtAccount = $data->mt_account ?? null;
 
-            $data = $webhook['payload'];
-
-            $loginId = $data['login_id'] ?? null;
-            $openTrades = $data['new_open_trades'] ?? null;
-            $closeTrades = $data['new_close_trades'] ?? null;
-            $isHistorical = $data['is_historical'] ?? null;
-
-            $account = MTAccount::where('login_id', $loginId)->first();
-
-            if (!$account) {
-                throw new Exception('Account not found.');
-            }
-
-            if ($isHistorical && !$account->initial_summary_notified) {
-                ProcessAccountNotification::dispatch($loginId);
-            }
-
-            if (!empty($openTrades)) {
-                ProcessOpenTradeNotification::dispatch($openTrades, $loginId);
-            }
-
-            if (!empty($closeTrades)) {
-                ProcessCloseTradeNotification::dispatch($closeTrades, $loginId);
-            }
-
-        } catch (Exception $e) {
-            Log::channel('webhook')->error($e->getMessage());
+        switch ($event) {
+            case 'trade-history-received':
+                $this->notifyAccountDetails($mtAccount, $userUuid);
+                break;
+            case 'new-trade-received':
+                $this->notifyNewTrades($userUuid);
+                break;
         }
+    }
+
+    private function notifyAccountDetails($mtAccount, $userUuid)
+    {
+        $chat = TelegraphChat::firstWhere('user_uuid', $userUuid);
+        $chat->html(ChatMessageService::showAccountDetails($mtAccount))->send();
+    }
+
+    private function notifyNewTrades($userUuid)
+    {
+        $openTrades = [];
+        $openTradeIds = [];
+        $closedTrades = [];
+        $closedTradeIds = [];
+        $trades = Trade::openNotifNotSent()->orWhere->closedNotifNotSent()->get();
+        $chat = TelegraphChat::firstWhere('user_uuid', $userUuid);
+
+        foreach ($trades as $trade) {
+            if ($trade->status === 'open') {
+                $openTrades[] = $trade;
+                $openTradeIds[] = $trade->ticket;
+            } else {
+                $closedTrades[] = $trade;
+                $closedTradeIds[] = $trade->ticket;
+
+                // Trades that are already closed but is not yet notified when it's opened.
+                // This happens when the trade was opened and closed immediately.
+                if (!$trade->open_notif_sent) {
+                    logger('$trade->open_notif_sent');
+                    logger(empty($trade->open_notif_sent));
+                    $openTrades[] = $trade;
+                    $openTradeIds[] = $trade->ticket;
+                }
+            }
+        }
+
+        // Update Notification Status
+        if ($openTradeIds) {
+            Trade::whereIn('ticket', $openTradeIds)->update(['open_notif_sent' => true]);
+        }
+
+        if ($closedTradeIds) {
+            Trade::whereIn('ticket', $closedTradeIds)->update(['closed_notif_sent' => true]);
+        }
+
+        // Send Notification
+        if ($openTrades) {
+            $chat->html(ChatMessageService::notifyOpenTrade($openTrades, $openTrades[0]?->account_login_id))->send();
+        }
+
+        if ($closedTrades) {
+            $chat->html(ChatMessageService::notifyCloseTrade($closedTrades, $closedTrades[0]?->account_login_id))->send();
+        }
+    }
+
+    /**
+     * Handle a job failure.
+     */
+    public function failed(Throwable $exception): void
+    {
+        Log::channel('laravel-webhook')->error($exception->getMessage());
     }
 }

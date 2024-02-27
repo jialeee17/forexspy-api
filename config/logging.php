@@ -52,16 +52,9 @@ return [
     */
 
     'channels' => [
-        'webhook' => [
+        'laravel-webhook' => [
             'driver' => 'single',
-            'path' => storage_path('logs/webhook.log'),
-            'level' => env('LOG_LEVEL', 'debug'),
-            'replace_placeholders' => true,
-        ],
-
-        'telegram' => [
-            'driver' => 'single',
-            'path' => storage_path('logs/telegram.log'),
+            'path' => storage_path('logs/laravel-webhook.log'),
             'level' => env('LOG_LEVEL', 'debug'),
             'replace_placeholders' => true,
         ],

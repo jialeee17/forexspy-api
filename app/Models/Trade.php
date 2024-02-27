@@ -15,6 +15,29 @@ class Trade extends Model
 
     protected $connection = 'forexspy_data';
 
+    protected $fillable = [
+        'account_login_id',
+        'ticket',
+        'symbol',
+        'order_type',
+        'lots',
+        'commission',
+        'profit',
+        'stop_loss',
+        'swap',
+        'take_profit',
+        'magic_number',
+        'comment',
+        'status',
+        'open_price',
+        'open_at',
+        'close_price',
+        'close_at',
+        'expired_at',
+        'open_notif_sent',
+        'closed_notif_sent',
+    ];
+
     /* -------------------------------------------------------------------------- */
     /*                                   Scopes                                   */
     /* -------------------------------------------------------------------------- */
@@ -26,6 +49,16 @@ class Trade extends Model
     public function scopeClosed(Builder $query): void
     {
         $query->where('status', 'closed');
+    }
+
+    public function scopeOpenNotifNotSent(Builder $query): void
+    {
+        $query->where('open_notif_sent', false);
+    }
+
+    public function scopeClosedNotifNotSent(Builder $query): void
+    {
+        $query->where('closed_notif_sent', false);
     }
 
     /* -------------------------------------------------------------------------- */

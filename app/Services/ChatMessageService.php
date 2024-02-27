@@ -32,7 +32,7 @@ class ChatMessageService
             . __('telegram.account.equity') . ": $currency {$account->equity}\n\n"
             . __('telegram.margin_level') . ": {$account->margin_level}%\n"
             . __('telegram.highest_dd') . ": {$account->highest_drawdown_percentage}% ({$account->highest_drawdown_amount} $currency)\n"
-            . __('telegram.floating') . ": $currency {$account->floating}\n\n"
+            . __('telegram.floating') . ": $currency {$account->profit}\n\n"
             . __('telegram.total_active_pairs') . ": {$account->active_pairs}\n"
             . __('telegram.total_orders') . ": {$account->active_orders}\n\n"
             . __('telegram.profit_today') . ": $currency {$account->profit_today}\n"
@@ -91,7 +91,7 @@ class ChatMessageService
             . __('telegram.account.id') . ": $loginId\n\n";
 
         foreach ($trades as $trade) {
-            $message .= strtoupper(__('telegram.' . $trade['type'])) . " " . strtoupper($trade['symbol']) . " @ {$trade['open_price']} for {$trade['lots']} " . __('telegram.lots') . " (" . __('telegram.open_time') . ": {$trade['open_at']})\n";
+            $message .= strtoupper(__('telegram.' . $trade->type)) . " " . strtoupper($trade->symbol) . " @ {$trade->open_price} for {$trade->lots} " . __('telegram.lots') . " (" . __('telegram.open_time') . ": {$trade->open_at})\n";
         }
 
         $message .= "\n <a href='" . config('app.url') ."'><i>" . __('telegram.by') . " " . config('app.name') . "</i></a>";
@@ -105,9 +105,9 @@ class ChatMessageService
             . __('telegram.account.id') . ": $loginId\n\n";
 
         foreach ($trades as $trade) {
-            $emoji = $trade['take_profit'] > 0 ? '📈' : '📉';
+            $emoji = $trade->take_profit > 0 ? '📈' : '📉';
 
-            $message .= $emoji . " " . strtoupper(__('telegram.' . $trade['type'])) . " " . strtoupper($trade['symbol']) . " ({$trade['lots']} " . __('telegram.lots') . ") @ {$trade['close_price']} - " . __('telegram.profits') . ": {$trade['take_profit']} (" . __('telegram.close_time') . ": {$trade['close_at']})\n";
+            $message .= $emoji . " " . strtoupper(__('telegram.' . $trade->type)) . " " . strtoupper($trade->symbol) . " ({$trade->lots} " . __('telegram.lots') . ") @ {$trade->close_price} - " . __('telegram.profits') . ": {$trade->take_profit} (" . __('telegram.close_time') . ": {$trade->close_at})\n";
         }
 
         $message .= "\n <a href='" . config('app.url') ."'><i>" . __('telegram.by') . " " . config('app.name') . "</i></a>";
