@@ -46,11 +46,15 @@ class ProcessWebhook extends SpatieProcessWebhookJob
 
         foreach ($trades as $trade) {
             if ($trade->status === 'open') {
-                $openTrades[] = $trade;
-                $openTradeIds[] = $trade->ticket;
+                if (!$trade->open_notif_sent) {
+                    $openTrades[] = $trade;
+                    $openTradeIds[] = $trade->ticket;
+                }
             } else {
-                $closedTrades[] = $trade;
-                $closedTradeIds[] = $trade->ticket;
+                if (!$trade->closed_notif_sent) {
+                    $closedTrades[] = $trade;
+                    $closedTradeIds[] = $trade->ticket;
+                }
 
                 // Trades that are already closed but is not yet notified when it's opened.
                 // This happens when the trade was opened and closed immediately.
