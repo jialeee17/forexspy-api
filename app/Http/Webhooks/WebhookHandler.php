@@ -21,6 +21,15 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class WebhookHandler extends \DefStudio\Telegraph\Handlers\WebhookHandler
 {
+    // Add all the storage data keys into the array
+    const STORAGE_DATA_LIST = [
+        'registration_step',
+        'registration_name',
+        'registration_username',
+        'registration_email',
+        'process_acc_connection',
+    ];
+
     protected static $handleUnknownCommands = false;
 
     private $userRepository;
@@ -45,6 +54,9 @@ class WebhookHandler extends \DefStudio\Telegraph\Handlers\WebhookHandler
 
     public function new_user()
     {
+        // Act as Middleware
+        $this->deleteStorageData(self::STORAGE_DATA_LIST);
+
         // Handle User Registration
         if (empty($this->chat->user)) {
             $this->chat->storage()->set('registration_step', 1);
@@ -441,5 +453,16 @@ class WebhookHandler extends \DefStudio\Telegraph\Handlers\WebhookHandler
         report($throwable);
 
         $this->reply($throwable->getMessage());
+    }
+
+    /* -------------------------------------------------------------------------- */
+    /*                                   Helpers                                  */
+    /* -------------------------------------------------------------------------- */
+    public function deleteStorageData(array $data)
+    {
+        // Use this function to manually delete data stored in the storage since Telegraph doesn't support Middleware (Middleware will be released soon).
+        foreach ($data as $d) {
+            $this->chat->storage()->forget($d);
+        }
     }
 }
