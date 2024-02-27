@@ -268,7 +268,7 @@ class WebhookHandler extends \DefStudio\Telegraph\Handlers\WebhookHandler
     public function view_selected_acc_details()
     {
         $loginId = $this->data->get('login_id');
-        $account = MTAccount::firstWhere('login_id', $loginId);
+        $account = MTAccount::where('login_id', $loginId)->firstOrFail();
         $this->chat->html(ChatMessageService::showAccountDetails($account))->send();
     }
 
@@ -294,7 +294,7 @@ class WebhookHandler extends \DefStudio\Telegraph\Handlers\WebhookHandler
     public function view_selected_acc_closed_trades()
     {
         $loginId = $this->data->get('login_id');
-        $account = MTAccount::firstWhere('login_id', $loginId);
+        $account = MTAccount::where('login_id', $loginId)->firstOrFail();
 
         /**
          * !Reminder: When updating the value of $period, make sure to update the value of $period in 'closedtrades()' function as well.
@@ -410,7 +410,7 @@ class WebhookHandler extends \DefStudio\Telegraph\Handlers\WebhookHandler
 
     public function handleAccountConnection(string $text)
     {
-        $user = User::firstWhere('uuid', $text);
+        $user = User::where('uuid', $text)->firstOrFail();
         $this->chat->user_uuid = $user->uuid;
         $this->chat->save();
 

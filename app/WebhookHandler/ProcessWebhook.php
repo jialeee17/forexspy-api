@@ -31,7 +31,7 @@ class ProcessWebhook extends SpatieProcessWebhookJob
 
     private function notifyAccountDetails($mtAccount, $userUuid)
     {
-        $chat = TelegraphChat::firstWhere('user_uuid', $userUuid);
+        $chat = TelegraphChat::where('user_uuid', $userUuid)->firstOrFail();
         $chat->html(ChatMessageService::showAccountDetails($mtAccount))->send();
     }
 
@@ -42,7 +42,7 @@ class ProcessWebhook extends SpatieProcessWebhookJob
         $closedTrades = [];
         $closedTradeIds = [];
         $trades = Trade::openNotifNotSent()->orWhere->closedNotifNotSent()->get();
-        $chat = TelegraphChat::firstWhere('user_uuid', $userUuid);
+        $chat = TelegraphChat::where('user_uuid', $userUuid)->firstOrFail();
 
         foreach ($trades as $trade) {
             if ($trade->status === 'open') {
@@ -55,8 +55,6 @@ class ProcessWebhook extends SpatieProcessWebhookJob
                 // Trades that are already closed but is not yet notified when it's opened.
                 // This happens when the trade was opened and closed immediately.
                 if (!$trade->open_notif_sent) {
-                    logger('$trade->open_notif_sent');
-                    logger(empty($trade->open_notif_sent));
                     $openTrades[] = $trade;
                     $openTradeIds[] = $trade->ticket;
                 }
