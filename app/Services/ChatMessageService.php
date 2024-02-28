@@ -4,126 +4,12 @@ namespace App\Services;
 
 class ChatMessageService
 {
-    public static function createUser($id)
-    {
-        $message = __('telegram.message.account_create_success') . "\n\n"
-            . __('telegram.user.id') . ": <code>$id</code>\n\n"
-            . __('telegram.message.new_community') . "\n\n"
-            . __('telegram.message.feel_free_to_ask');
-
-        return $message;
-    }
-
-    public static function showUserId($id)
-    {
-        $message = __('telegram.here_it_is') . ": <code>$id</code>";
-
-        return $message;
-    }
-
-    public static function showAccountDetails($account)
-    {
-        $currency = $account->currency;
-
-        $message = "<b>" . config('app.name') . "</b>\n"
-            . date('Y-m-d H:i:s') . "\n\n"
-            . __('telegram.account.id') . ": {$account->login_id}\n"
-            . __('telegram.account.balance') . ": $currency {$account->balance}\n"
-            . __('telegram.account.equity') . ": $currency {$account->equity}\n\n"
-            . __('telegram.margin_level') . ": {$account->margin_level}%\n"
-            . __('telegram.highest_dd') . ": {$account->highest_drawdown_percentage}% ({$account->highest_drawdown_amount} $currency)\n"
-            . __('telegram.floating') . ": $currency {$account->profit}\n\n"
-            . __('telegram.total_active_pairs') . ": {$account->active_pairs}\n"
-            . __('telegram.total_orders') . ": {$account->active_orders}\n\n"
-            . __('telegram.profit_today') . ": $currency {$account->profit_today}\n"
-            . __('telegram.profit_all_time') . ": $currency {$account->profit_all_time}\n\n"
-            . "<a href='" . config('app.url') ."'><i>" . __('telegram.by') . " " . config('app.name') . "</i></a>"
-        ;
-
-        return $message;
-    }
-
-    public static function showNewTrades($trades, $period)
-    {
-        if ($trades->isNotEmpty()) {
-            $message = "📢 <b>" . __('telegram.trade.past_new_trades', ['period' => $period]) . "</b>\n\n";
-
-            foreach ($trades as $trade) {
-                $message .= strtoupper(__('telegram.' . $trade->type)) . " " . strtoupper($trade->symbol) . " @ {$trade->open_price} for {$trade->lots} " . __('telegram.lots') . "\n";
-            }
-
-            $message .= "\n <a href='" . config('app.url') ."'><i>" . __('telegram.by') . " " . config('app.name') . "</i></a>";
-        } else {
-            $message = __('telegram.trade.new_trade_not_found');
-        }
-
-        return $message;
-    }
-
-    public static function showClosedTrades($trades, $period, $currency)
-    {
-        if ($trades->isNotEmpty()) {
-            $totalProfit = 0;
-
-            $message = "📢 <b>" . __('telegram.trade.past_closed_trades', ['period' => $period]) . "</b>\n\n";
-
-            foreach ($trades as $trade) {
-                $emoji = $trade->take_profit > 0 ? '📈' : '📉';
-
-                $message .= $emoji . " " . strtoupper(__('telegram.' . $trade->type)) . " " . strtoupper($trade->symbol) . " ({$trade->lots} " . __('telegram.lots') . ") @ {$trade->close_price} - " . __('telegram.profits') . ": {$trade->take_profit}\n";
-
-                $totalProfit += $trade->take_profit;
-            }
-
-            $message .="\n" . __('telegram.total_profits') . ": {$totalProfit} {$currency}\n"
-                . "<a href='" . config('app.url') ."'><i>" . __('telegram.by') . " " . config('app.name') . "</i></a>";
-        ;
-        } else {
-            $message = __('telegram.trade.close_trade_not_found');
-        }
-
-        return $message;
-    }
-
-    public static function notifyOpenTrade($trades, $loginId)
-    {
-        $message = "✅ <b>" . __('telegram.message.open_trade_success') . "</b>\n\n"
-            . __('telegram.account.id') . ": $loginId\n\n";
-
-        foreach ($trades as $trade) {
-            $message .= strtoupper(__('telegram.' . $trade->type)) . " " . strtoupper($trade->symbol) . " @ {$trade->open_price} for {$trade->lots} " . __('telegram.lots') . " (" . __('telegram.open_time') . ": {$trade->open_at})\n";
-        }
-
-        $message .= "\n <a href='" . config('app.url') ."'><i>" . __('telegram.by') . " " . config('app.name') . "</i></a>";
-
-        return $message;
-    }
-
-    public static function notifyCloseTrade($trades, $loginId)
-    {
-        $message = "✅ <b>" . __('telegram.message.close_trade_success') . "</b>\n\n"
-            . __('telegram.account.id') . ": $loginId\n\n";
-
-        foreach ($trades as $trade) {
-            $emoji = $trade->take_profit > 0 ? '📈' : '📉';
-
-            $message .= $emoji . " " . strtoupper(__('telegram.' . $trade->type)) . " " . strtoupper($trade->symbol) . " ({$trade->lots} " . __('telegram.lots') . ") @ {$trade->close_price} - " . __('telegram.profits') . ": {$trade->take_profit} (" . __('telegram.close_time') . ": {$trade->close_at})\n";
-        }
-
-        $message .= "\n <a href='" . config('app.url') ."'><i>" . __('telegram.by') . " " . config('app.name') . "</i></a>";
-
-        return $message;
-    }
-
-    /* -------------------------------------------------------------------------- */
-    /*                                   Common                                   */
-    /* -------------------------------------------------------------------------- */
     public static function welcome()
     {
         $commands = config('botcommands');
 
-        $message = __('telegram.message.welcome_1') . "\n\n"
-            . __('telegram.message.welcome_2');
+        $message = str_replace(':name', env('APP_NAME'), __('telegram.welcome')) . "\n\n"
+            . str_replace(':name', env('APP_NAME'), __('telegram.intro_opening'));
 
         if (!empty($commands)) {
             $message .= "\n\n";
@@ -144,27 +30,167 @@ class ChatMessageService
         return $message;
     }
 
-    public static function existingUser($id)
+    public static function userRegistrationSuccess($id)
     {
-        $message = __('telegram.message.account_existed') . "\n\n"
-            . __('telegram.user.id') . ": <code>$id</code>\n\n"
-            . __('telegram.message.old_community') . "\n\n"
-            . __('telegram.message.feel_free_to_ask');
+        $message = str_replace(':name', env('APP_NAME'), __('telegram.user_registration_success')) . "\n\n"
+            . __('telegram.user_id') . ": <code>$id</code>";
 
         return $message;
     }
 
-    public static function selectAccount()
+    public static function showUserId($id)
     {
-        $message = __('telegram.message.select_account');
+        $replace = "<code>$id</code>";
+        $message = str_replace(':id', $replace, __('telegram.show_user_id'));
 
         return $message;
     }
 
-    public static function unknownCommand($command)
+    public static function accountDetails($account)
     {
-        $message = __('telegram.message.unknown_command', ['command' => $command]);
+        $currency = $account->currency;
+        $date = date('Y-m-d H:i:s');
+
+        $message = "<b>📊 Account Details:</b>\n\n"
+            . "$date\n\n"
+            . __('telegram.account_id') . ": {$account->login_id}\n"
+            . __('telegram.account_balance') . ": $currency {$account->balance}\n"
+            . __('telegram.account_equity') . ": $currency {$account->equity}\n\n"
+            . __('telegram.margin_level') . ": {$account->margin_level}%\n"
+            . __('telegram.highest_dd') . ": {$account->highest_drawdown_percentage}% ({$account->highest_drawdown_amount} $currency)\n"
+            . __('telegram.floating') . ": $currency {$account->profit}\n\n"
+            . __('telegram.total_active_pairs') . ": {$account->active_pairs}\n"
+            . __('telegram.total_orders') . ": {$account->active_orders}\n\n"
+            . __('telegram.profit_today') . ": $currency {$account->profit_today}\n"
+            . __('telegram.profit_all_time') . ": $currency {$account->profit_all_time}\n\n"
+            . "<a href='" . env('APP_URL') . "'><i>" . __('telegram.by') . " " . env('APP_NAME') . "</i></a>";
 
         return $message;
+    }
+
+    // public static function existingUser($id)
+    // {
+    //     $message = __('telegram.message.account_existed') . "\n\n"
+    //         . __('telegram.user_id') . ": <code>$id</code>\n\n"
+    //         . __('telegram.message.old_community') . "\n\n"
+    //         . __('telegram.message.feel_free_to_ask');
+
+    //     return $message;
+    // }
+
+    public static function connectionExist()
+    {
+        $message = __('telegram.connection_exist');
+        return $message;
+    }
+
+    public static function pastOpenTrades($trades, $period)
+    {
+        if ($trades->isNotEmpty()) {
+            $message = "<b>📈 Recent Open Trades Summary</b>\n\n";
+
+            foreach ($trades as $trade) {
+                $type = strtoupper(__('telegram.' . $trade->type));
+                $symbol = strtoupper($trade->symbol);
+                $openPrice = $trade->open_price;
+                $lots = $trade->lots;
+
+                $message .= "$type $symbol @ $openPrice for $lots " . __('telegram.lots') . "\n";
+            }
+
+            $message .= "\n <a href='" . env('APP_URL') . "'><i>" . __('telegram.by') . " " . env('APP_NAME') . "</i></a>";
+        } else {
+            $message = __('telegram.trade.new_trade_not_found');
+        }
+
+        return $message;
+    }
+
+    public static function pastClosedTrades($trades, $period, $currency)
+    {
+        if ($trades->isNotEmpty()) {
+            $totalProfit = 0;
+
+            $message = "<b>📉 Recent Closed Trades Summary</b>\n\n";
+
+            foreach ($trades as $trade) {
+                $type = strtoupper(__('telegram.' . $trade->type));
+                $symbol = strtoupper($trade->symbol);
+                $lots = $trade->lots;
+                $closedPrice = $trade->close_price;
+                $profit = $trade->take_profit;
+
+                if ($trade->take_profit > 0) {
+                    $emoji = '💵';
+                } elseif ($trade->take_profit == 0) {
+                    $emoji = '➖';
+                } else {
+                    $emoji = '💸';
+                }
+
+                $message .= "$emoji $type $symbol ($lots " . __('telegram.lots') . ") @ $closedPrice - " . __('telegram.profits') . ": $profit\n";
+
+                $totalProfit += $trade->take_profit;
+            }
+
+            $message .= "\n" . __('telegram.total_profits') . ": $currency $totalProfit\n"
+                . "<a href='" . env('APP_URL') . "'><i>" . __('telegram.by') . " " . env('APP_NAME') . "</i></a>";
+        } else {
+            $message = __('telegram.trade.close_trade_not_found');
+        }
+
+        return $message;
+    }
+
+    public static function newOpenTrades($trades, $loginId)
+    {
+        $message = "<b>" . __('telegram.new_open_trades') . "</b>\n\n"
+            . __('telegram.account_id') . ": $loginId\n\n";
+
+        foreach ($trades as $trade) {
+            $type = strtoupper(__('telegram.' . $trade->type));
+            $symbol = strtoupper($trade->symbol);
+            $openPrice = $trade->open_price;
+            $lots = $trade->lots;
+            $openAt = $trade->open_at;
+
+            $message .= "$type $symbol @ $openPrice for $lots " . __('telegram.lots') . " (" . __('telegram.open_time') . ": $openAt)\n";
+        }
+
+        $message .= "\n <a href='" . env('APP_URL') . "'><i>" . __('telegram.by') . " " . env('APP_NAME') . "</i></a>";
+        return $message;
+    }
+
+    public static function newClosedTrades($trades, $loginId)
+    {
+        $message = "<b>" . __('telegram.new_closed_trades') . "</b>\n\n"
+            . __('telegram.account_id') . ": $loginId\n\n";
+
+        foreach ($trades as $trade) {
+            $type = strtoupper(__('telegram.' . $trade->type));
+            $symbol = strtoupper($trade->symbol);
+            $lots = $trade->lots;
+            $closedPrice = $trade->close_price;
+            $profit = $trade->take_profit;
+            $closedAt = $trade->close_at;
+
+            if ($trade->take_profit > 0) {
+                $emoji = '💵';
+            } elseif ($trade->take_profit == 0) {
+                $emoji = '➖';
+            } else {
+                $emoji = '💸';
+            }
+
+            $message .= "$emoji $type $symbol ($lots " . __('telegram.lots') . ") @ $closedPrice - " . __('telegram.profits') . ": $profit (" . __('telegram.close_time') . ": $closedAt)\n";
+        }
+
+        $message .= "\n <a href='" . env('APP_URL') . "'><i>" . __('telegram.by') . " " . env('APP_NAME') . "</i></a>";
+        return $message;
+    }
+
+    public static function unknownCommand()
+    {
+        return __('telegram.unknown_command');
     }
 }

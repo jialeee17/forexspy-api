@@ -76,11 +76,11 @@ class ProcessWebhook extends SpatieProcessWebhookJob
 
         // Send Notification
         if ($openTrades) {
-            $chat->html(ChatMessageService::notifyOpenTrade($openTrades, $openTrades[0]?->account_login_id))->send();
+            $chat->html(ChatMessageService::newOpenTrades($openTrades, $openTrades[0]?->account_login_id))->send();
         }
 
         if ($closedTrades) {
-            $chat->html(ChatMessageService::notifyCloseTrade($closedTrades, $closedTrades[0]?->account_login_id))->send();
+            $chat->html(ChatMessageService::newClosedTrades($closedTrades, $closedTrades[0]?->account_login_id))->send();
         }
     }
 

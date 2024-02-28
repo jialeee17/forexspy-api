@@ -29,7 +29,7 @@ class WebhookHandler extends \DefStudio\Telegraph\Handlers\WebhookHandler
         'process_acc_connection',
     ];
 
-    protected static $handleUnknownCommands = false;
+    protected static $handleUnknownCommands = true;
 
     private $userRepository;
 
@@ -43,12 +43,12 @@ class WebhookHandler extends \DefStudio\Telegraph\Handlers\WebhookHandler
     /* -------------------------------------------------------------------------- */
     public function start()
     {
-        $this->help();
+        $this->chat->html(ChatMessageService::welcome())->send();
     }
 
     public function help()
     {
-        $this->chat->html(ChatMessageService::welcome())->send();
+        $this->start();
     }
 
     public function new_user()
@@ -57,14 +57,8 @@ class WebhookHandler extends \DefStudio\Telegraph\Handlers\WebhookHandler
         $this->ensureStorageIsClear(self::STORAGE_DATA_LIST);
 
         // Handle User Registration
-        if (empty($this->chat->user)) {
-            $this->chat->storage()->set('registration_step', 1);
-            $this->chat->html('Enter your name')->send();
-            return;
-        }
-
-        $message = ChatMessageService::existingUser($this->chat->user->uuid);
-        $this->chat->html($message)->send();
+        $this->chat->storage()->set('registration_step', 1);
+        $this->chat->html('Please enter your name.')->send();
     }
 
     public function my_id()
@@ -86,7 +80,7 @@ class WebhookHandler extends \DefStudio\Telegraph\Handlers\WebhookHandler
         $accounts = $this->chat->user?->mtAccounts;
 
         if ($accounts->count() > 1) {
-            $this->chat->html(ChatMessageService::selectAccount())
+            $this->chat->html('Please select the MetaTrader account you want to view:')
                 ->keyboard(function (Keyboard $keyboard) use ($accounts) {
                     foreach ($accounts as $account) {
                         $keyboard
@@ -98,7 +92,7 @@ class WebhookHandler extends \DefStudio\Telegraph\Handlers\WebhookHandler
                 })
                 ->send();
         } else {
-            $this->chat->html(ChatMessageService::showAccountDetails($accounts->first()))->send();
+            $this->chat->html(ChatMessageService::accountDetails($accounts->first()))->send();
         }
     }
 
@@ -107,11 +101,11 @@ class WebhookHandler extends \DefStudio\Telegraph\Handlers\WebhookHandler
         // Middlewares
         $this->ensureStorageIsClear(self::STORAGE_DATA_LIST);
 
-        if (empty($this->chat->user_uuid)) {
-            $message = 'Please provide your User ID to connect your Telegram account';
-            $this->chat->storage()->set('process_acc_connection', 1);
+        if ($this->chat->user) {
+            $message = ChatMessageService::connectionExist();
         } else {
-            $message = 'Your Telegram account is already linked to a ' . env('APP_NAME', 'platform') . ' account.';
+            $message = 'Please enter your user ID.';
+            $this->chat->storage()->set('process_acc_connection', 1);
         }
 
         $this->chat->html($message)->send();
@@ -127,7 +121,7 @@ class WebhookHandler extends \DefStudio\Telegraph\Handlers\WebhookHandler
         $accounts = $this->chat->user?->mtAccounts;
 
         if ($accounts->count() > 1) {
-            $this->chat->html(ChatMessageService::selectAccount())
+            $this->chat->html('Please select the MetaTrader account you want to view:')
                 ->keyboard(function (Keyboard $keyboard) use ($accounts) {
                     foreach ($accounts as $account) {
                         $keyboard
@@ -151,7 +145,7 @@ class WebhookHandler extends \DefStudio\Telegraph\Handlers\WebhookHandler
                 ->open()
                 ->get();
 
-            $this->chat->html(ChatMessageService::showNewTrades($trades, $period))->send();
+            $this->chat->html(ChatMessageService::pastOpenTrades($trades, $period))->send();
         }
     }
 
@@ -165,7 +159,7 @@ class WebhookHandler extends \DefStudio\Telegraph\Handlers\WebhookHandler
         $accounts = $this->chat->user?->mtAccounts;
 
         if ($accounts->count() > 1) {
-            $this->chat->html(ChatMessageService::selectAccount())
+            $this->chat->html('Please select the MetaTrader account you want to view:')
                 ->keyboard(function (Keyboard $keyboard) use ($accounts) {
                     foreach ($accounts as $account) {
                         $keyboard
@@ -190,7 +184,7 @@ class WebhookHandler extends \DefStudio\Telegraph\Handlers\WebhookHandler
                 ->closed()
                 ->get();
 
-            $this->chat->html(ChatMessageService::showClosedTrades($trades, $period, $currency))->send();
+            $this->chat->html(ChatMessageService::pastClosedTrades($trades, $period, $currency))->send();
         }
     }
 
@@ -204,7 +198,7 @@ class WebhookHandler extends \DefStudio\Telegraph\Handlers\WebhookHandler
         $accounts = $this->chat->user?->mtAccounts;
 
         if ($accounts->count() > 1) {
-            $this->chat->html(ChatMessageService::selectAccount())
+            $this->chat->html('Please select the MetaTrader account you want to view:')
                 ->keyboard(function (Keyboard $keyboard) use ($accounts) {
                     foreach ($accounts as $account) {
                         $keyboard
@@ -225,7 +219,7 @@ class WebhookHandler extends \DefStudio\Telegraph\Handlers\WebhookHandler
             $period = 12; // in hours
 
             // Account Details
-            $this->chat->html(ChatMessageService::showAccountDetails($account))->send();
+            $this->chat->html(ChatMessageService::accountDetails($account))->send();
 
             // New Trades
             $openTrades = Trade::whereHas('mtAccount', function (Builder $query) use ($account) {
@@ -235,7 +229,7 @@ class WebhookHandler extends \DefStudio\Telegraph\Handlers\WebhookHandler
                 ->open()
                 ->get();
 
-            $this->chat->html(ChatMessageService::showNewTrades($openTrades, $period))->send();
+            $this->chat->html(ChatMessageService::pastOpenTrades($openTrades, $period))->send();
 
             // Closed Trades
             $closedTrades = Trade::whereHas('mtAccount', function (Builder $query) use ($account) {
@@ -245,7 +239,7 @@ class WebhookHandler extends \DefStudio\Telegraph\Handlers\WebhookHandler
                 ->closed()
                 ->get();
 
-            $this->chat->html(ChatMessageService::showClosedTrades($closedTrades, $period, $account->currency))->send();
+            $this->chat->html(ChatMessageService::pastClosedTrades($closedTrades, $period, $account->currency))->send();
         }
     }
 
@@ -261,7 +255,7 @@ class WebhookHandler extends \DefStudio\Telegraph\Handlers\WebhookHandler
     {
         // Middlewares
         $this->ensureUserAccountIsExist();
-        
+
         $this->queueCommand(__FUNCTION__);
     }
 
@@ -289,7 +283,7 @@ class WebhookHandler extends \DefStudio\Telegraph\Handlers\WebhookHandler
     {
         $loginId = $this->data->get('login_id');
         $account = MTAccount::where('login_id', $loginId)->firstOrFail();
-        $this->chat->html(ChatMessageService::showAccountDetails($account))->send();
+        $this->chat->html(ChatMessageService::accountDetails($account))->send();
     }
 
     public function view_selected_acc_open_trades()
@@ -308,7 +302,7 @@ class WebhookHandler extends \DefStudio\Telegraph\Handlers\WebhookHandler
             ->open()
             ->get();
 
-        $this->chat->html(ChatMessageService::showNewTrades($trades, $period))->send();
+        $this->chat->html(ChatMessageService::pastOpenTrades($trades, $period))->send();
     }
 
     public function view_selected_acc_closed_trades()
@@ -328,7 +322,7 @@ class WebhookHandler extends \DefStudio\Telegraph\Handlers\WebhookHandler
             ->closed()
             ->get();
 
-        $this->chat->html(ChatMessageService::showClosedTrades($trades, $period, $account->currency))->send();
+        $this->chat->html(ChatMessageService::pastClosedTrades($trades, $period, $account->currency))->send();
     }
 
     public function view_selected_acc_summary()
@@ -343,7 +337,7 @@ class WebhookHandler extends \DefStudio\Telegraph\Handlers\WebhookHandler
         // Account Details
         $account = MTAccount::where('login_id', $loginId)->first();
 
-        $this->chat->html(ChatMessageService::showAccountDetails($account))->send();
+        $this->chat->html(ChatMessageService::accountDetails($account))->send();
 
         // New Trades
         $period = 12; // in hours
@@ -355,7 +349,7 @@ class WebhookHandler extends \DefStudio\Telegraph\Handlers\WebhookHandler
             ->open()
             ->get();
 
-        $this->chat->html(ChatMessageService::showNewTrades($openTrades, $period))->send();
+        $this->chat->html(ChatMessageService::pastOpenTrades($openTrades, $period))->send();
 
         // Closed Trades
         $closedTrades = Trade::whereHas('myAccount', function (Builder $query) use ($loginId) {
@@ -365,10 +359,10 @@ class WebhookHandler extends \DefStudio\Telegraph\Handlers\WebhookHandler
             ->closed()
             ->get();
 
-        $this->chat->html(ChatMessageService::showClosedTrades($closedTrades, $period, $account->currency))->send();
+        $this->chat->html(ChatMessageService::pastClosedTrades($closedTrades, $period, $account->currency))->send();
     }
 
-    public function handleUserRegistration(int $step, string $text)
+    private function handleUserRegistration(int $step, string $text)
     {
         DB::beginTransaction();
 
@@ -377,17 +371,18 @@ class WebhookHandler extends \DefStudio\Telegraph\Handlers\WebhookHandler
                 case 1:
                     $this->chat->storage()->set('registration_name', $text);
                     $this->chat->storage()->set('registration_step', 2);
-                    $this->chat->html('Enter your username')->send();
+                    $this->chat->html('Choose a username.')->send();
                     break;
                 case 2:
                     $this->chat->storage()->set('registration_username', $text);
                     $this->chat->storage()->set('registration_step', 3);
-                    $this->chat->html('Enter your email')->send();
+                    $this->chat->html('Enter your email address.')->send();
                     break;
                 case 3:
+                    // TODO: Validate email address...
                     $this->chat->storage()->set('registration_email', $text);
                     $this->chat->storage()->set('registration_step', 4);
-                    $this->chat->html('Enter your password')->send();
+                    $this->chat->html('Create a password.')->send();
                     break;
                 case 4:
                     $name = $this->chat->storage()->get('registration_name');
@@ -405,11 +400,13 @@ class WebhookHandler extends \DefStudio\Telegraph\Handlers\WebhookHandler
                     $user->assignRole('customer');
 
                     // Update Foreign Key
-                    $this->chat->user_uuid = $user->uuid;
-                    $this->chat->save();
+                    if (empty($this->chat->user)) {
+                        $this->chat->user_uuid = $user->uuid;
+                        $this->chat->save();
+                    }
 
                     // Send Message
-                    $message = ChatMessageService::createUser($user->uuid);
+                    $message = ChatMessageService::userRegistrationSuccess($user->uuid);
                     $this->chat->html($message)->send();
 
                     // Clear Stored Data
@@ -500,7 +497,7 @@ class WebhookHandler extends \DefStudio\Telegraph\Handlers\WebhookHandler
             return;
         }
 
-        $this->chat->html(ChatMessageService::unknownCommand($text))->send();
+        $this->chat->html(ChatMessageService::unknownCommand())->send();
     }
 
     /* -------------------------------------------------------------------------- */
