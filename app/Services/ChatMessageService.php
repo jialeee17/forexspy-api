@@ -80,8 +80,7 @@ class ChatMessageService
 
     public static function connectionExist()
     {
-        $message = __('telegram.connection_exist');
-        return $message;
+        return str_replace(':name', env('APP_NAME'), __('telegram.connection_exist'));
     }
 
     public static function pastOpenTrades($trades, $period)
