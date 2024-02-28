@@ -11,7 +11,6 @@ use App\Models\MTAccount;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Stringable;
-use Illuminate\Support\Facades\Log;
 use App\Repositories\UserRepository;
 use App\Services\ChatMessageService;
 use Illuminate\Support\Facades\Hash;
@@ -21,7 +20,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class WebhookHandler extends \DefStudio\Telegraph\Handlers\WebhookHandler
 {
-    // Add all the storage data keys into the array
+    // Add all the data keys inside the storage
     const STORAGE_DATA_LIST = [
         'registration_step',
         'registration_name',
@@ -54,8 +53,8 @@ class WebhookHandler extends \DefStudio\Telegraph\Handlers\WebhookHandler
 
     public function new_user()
     {
-        // Act as Middleware
-        $this->deleteStorageData(self::STORAGE_DATA_LIST);
+        // Middlewares
+        $this->ensureStorageIsClear(self::STORAGE_DATA_LIST);
 
         // Handle User Registration
         if (empty($this->chat->user)) {
@@ -70,24 +69,21 @@ class WebhookHandler extends \DefStudio\Telegraph\Handlers\WebhookHandler
 
     public function my_id()
     {
-        if (empty($this->chat->user)) {
-            throw new Exception('User not found');
-        }
+        // Middlewares
+        $this->ensureUserAccountIsExist();
+        $this->ensureStorageIsClear(self::STORAGE_DATA_LIST);
 
         $this->chat->html(ChatMessageService::showUserId($this->chat->user_uuid))->send();
     }
 
     public function my_account()
     {
-        if (empty($this->chat->user)) {
-            throw new Exception('User not found');
-        }
+        // Middlewares
+        $this->ensureUserAccountIsExist();
+        $this->ensureMTAccountIsExist();
+        $this->ensureStorageIsClear(self::STORAGE_DATA_LIST);
 
         $accounts = $this->chat->user?->mtAccounts;
-
-        if ($accounts->isEmpty()) {
-            throw new Exception('Account not found');
-        }
 
         if ($accounts->count() > 1) {
             $this->chat->html(ChatMessageService::selectAccount())
@@ -108,8 +104,8 @@ class WebhookHandler extends \DefStudio\Telegraph\Handlers\WebhookHandler
 
     public function connect()
     {
-        // Act as Middleware
-        $this->deleteStorageData(self::STORAGE_DATA_LIST);
+        // Middlewares
+        $this->ensureStorageIsClear(self::STORAGE_DATA_LIST);
 
         if (empty($this->chat->user_uuid)) {
             $message = 'Please provide your User ID to connect your Telegram account';
@@ -123,15 +119,12 @@ class WebhookHandler extends \DefStudio\Telegraph\Handlers\WebhookHandler
 
     public function view_open_trades()
     {
-        if (empty($this->chat->user)) {
-            throw new Exception('User not found');
-        }
+        // Middlewares
+        $this->ensureUserAccountIsExist();
+        $this->ensureMTAccountIsExist();
+        $this->ensureStorageIsClear(self::STORAGE_DATA_LIST);
 
         $accounts = $this->chat->user?->mtAccounts;
-
-        if ($accounts->isEmpty()) {
-            throw new Exception('Account not found');
-        }
 
         if ($accounts->count() > 1) {
             $this->chat->html(ChatMessageService::selectAccount())
@@ -164,15 +157,12 @@ class WebhookHandler extends \DefStudio\Telegraph\Handlers\WebhookHandler
 
     public function view_closed_trades()
     {
-        if (empty($this->chat->user)) {
-            throw new Exception('User not found');
-        }
+        // Middlewares
+        $this->ensureUserAccountIsExist();
+        $this->ensureMTAccountIsExist();
+        $this->ensureStorageIsClear(self::STORAGE_DATA_LIST);
 
         $accounts = $this->chat->user?->mtAccounts;
-
-        if ($accounts->isEmpty()) {
-            throw new Exception('Account not found');
-        }
 
         if ($accounts->count() > 1) {
             $this->chat->html(ChatMessageService::selectAccount())
@@ -206,15 +196,12 @@ class WebhookHandler extends \DefStudio\Telegraph\Handlers\WebhookHandler
 
     public function view_summary()
     {
-        if (empty($this->chat->user)) {
-            throw new Exception('User not found');
-        }
+        // Middlewares
+        $this->ensureUserAccountIsExist();
+        $this->ensureMTAccountIsExist();
+        $this->ensureStorageIsClear(self::STORAGE_DATA_LIST);
 
         $accounts = $this->chat->user?->mtAccounts;
-
-        if ($accounts->isEmpty()) {
-            throw new Exception('Account not found');
-        }
 
         if ($accounts->count() > 1) {
             $this->chat->html(ChatMessageService::selectAccount())
@@ -422,6 +409,37 @@ class WebhookHandler extends \DefStudio\Telegraph\Handlers\WebhookHandler
     }
 
     /* -------------------------------------------------------------------------- */
+    /*                                 Middlewares                                */
+    /* -------------------------------------------------------------------------- */
+    // ! Temporary solution for middleware implementation.
+    // TODO: Refactor it once Laravel Telegraph supports middleware.
+    private function ensureUserAccountIsExist()
+    {
+        if (empty($this->chat->user)) {
+            throw new Exception("It seems like you haven't connected to any user account yet. To get started, please connect to a user account using the '/connect' command. If you don't have a user account yet, you can register one through the bot using the '/new_user' command.");
+        }
+
+        return true;
+    }
+
+    private function ensureMTAccountIsExist()
+    {
+        if ($this->chat->user?->mtAccounts->isEmpty()) {
+            throw new Exception("It seems that we couldn't find your MetaTrader account linked to our system. To ensure connectivity, please ensure your token is stored in the input settings of MT4.");
+        }
+
+        return true;
+    }
+
+    private function ensureStorageIsClear(array $data)
+    {
+        // Use this function to manually delete data stored in the storage since Telegraph doesn't support Middleware (Middleware will be released soon).
+        foreach ($data as $d) {
+            $this->chat->storage()->forget($d);
+        }
+    }
+
+    /* -------------------------------------------------------------------------- */
     /*                            Handle Chat Messages                            */
     /* -------------------------------------------------------------------------- */
     protected function handleChatMessage(Stringable $text): void
@@ -464,16 +482,5 @@ class WebhookHandler extends \DefStudio\Telegraph\Handlers\WebhookHandler
         report($throwable);
 
         $this->reply($throwable->getMessage());
-    }
-
-    /* -------------------------------------------------------------------------- */
-    /*                                   Helpers                                  */
-    /* -------------------------------------------------------------------------- */
-    public function deleteStorageData(array $data)
-    {
-        // Use this function to manually delete data stored in the storage since Telegraph doesn't support Middleware (Middleware will be released soon).
-        foreach ($data as $d) {
-            $this->chat->storage()->forget($d);
-        }
     }
 }
