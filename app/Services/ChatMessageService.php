@@ -62,8 +62,8 @@ class ChatMessageService
             . __('telegram.total_active_pairs') . ": {$account->active_pairs}\n"
             . __('telegram.total_orders') . ": {$account->active_orders}\n\n"
             . __('telegram.profit_today') . ": $currency {$account->profit_today}\n"
-            . __('telegram.profit_all_time') . ": $currency {$account->profit_all_time}\n\n"
-            . "<a href='" . env('APP_URL') . "'><i>" . __('telegram.by') . " " . env('APP_NAME') . "</i></a>";
+            . __('telegram.profit_all_time') . ": $currency {$account->profit_all_time}\n\n";
+            // . "<a href='" . env('APP_URL') . "'><i>" . __('telegram.by') . " " . env('APP_NAME') . "</i></a>";
 
         return $message;
     }
@@ -97,7 +97,7 @@ class ChatMessageService
                 $message .= "$type $symbol @ $openPrice for $lots " . __('telegram.lots') . "\n";
             }
 
-            $message .= "\n <a href='" . env('APP_URL') . "'><i>" . __('telegram.by') . " " . env('APP_NAME') . "</i></a>";
+            // $message .= "\n <a href='" . env('APP_URL') . "'><i>" . __('telegram.by') . " " . env('APP_NAME') . "</i></a>";
         } else {
             $message = __('telegram.trade.new_trade_not_found');
         }
@@ -132,8 +132,8 @@ class ChatMessageService
                 $totalProfit += $trade->take_profit;
             }
 
-            $message .= "\n" . __('telegram.total_profits') . ": $currency $totalProfit\n"
-                . "<a href='" . env('APP_URL') . "'><i>" . __('telegram.by') . " " . env('APP_NAME') . "</i></a>";
+            $message .= "\n" . __('telegram.total_profits') . ": $currency $totalProfit\n\n";
+                // . "<a href='" . env('APP_URL') . "'><i>" . __('telegram.by') . " " . env('APP_NAME') . "</i></a>";
         } else {
             $message = __('telegram.trade.close_trade_not_found');
         }
@@ -156,7 +156,7 @@ class ChatMessageService
             $message .= "$type $symbol @ $openPrice for $lots " . __('telegram.lots') . " (" . __('telegram.open_time') . ": $openAt)\n";
         }
 
-        $message .= "\n <a href='" . env('APP_URL') . "'><i>" . __('telegram.by') . " " . env('APP_NAME') . "</i></a>";
+        // $message .= "\n <a href='" . env('APP_URL') . "'><i>" . __('telegram.by') . " " . env('APP_NAME') . "</i></a>";
         return $message;
     }
 
@@ -184,7 +184,7 @@ class ChatMessageService
             $message .= "$emoji $type $symbol ($lots " . __('telegram.lots') . ") @ $closedPrice - " . __('telegram.profits') . ": $profit (" . __('telegram.close_time') . ": $closedAt)\n";
         }
 
-        $message .= "\n <a href='" . env('APP_URL') . "'><i>" . __('telegram.by') . " " . env('APP_NAME') . "</i></a>";
+        // $message .= "\n <a href='" . env('APP_URL') . "'><i>" . __('telegram.by') . " " . env('APP_NAME') . "</i></a>";
         return $message;
     }
 
