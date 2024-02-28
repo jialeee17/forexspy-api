@@ -379,7 +379,10 @@ class WebhookHandler extends \DefStudio\Telegraph\Handlers\WebhookHandler
                     $this->chat->html('Enter your email address.')->send();
                     break;
                 case 3:
-                    // TODO: Validate email address...
+                    if (!filter_var($text, FILTER_VALIDATE_EMAIL)) {
+                        throw new Exception(__('telegram.invalid_email'));
+                    }
+
                     $this->chat->storage()->set('registration_email', $text);
                     $this->chat->storage()->set('registration_step', 4);
                     $this->chat->html('Create a password.')->send();

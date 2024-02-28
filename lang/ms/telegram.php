@@ -6,6 +6,7 @@ return [
     'show_user_id' => '🔍 Your User ID is :id. This unique identifier is essential for certain functionalities within our platform. If you have any questions or need assistance, feel free to reach out!',
     'connection_exist' => "⛔️ Connection Failed: It appears your Telegram account is already linked with a :name account.",
     'invalid_user_id' => "⛔️ Invalid User ID: The provided user ID appears to be invalid or does not exist in our system. Please double-check the user ID and try again.",
+    'invalid_email' => "⛔️ Invalid Email Address: The email address you provided appears to be invalid. Please ensure you enter a valid email address to complete the registration process.",
 
     'user_registration_success' => "🎉 Congratulations! You've successfully registered with :name. You're now ready to explore all the features. If you have any questions or need assistance, feel free to reach out.",
 
