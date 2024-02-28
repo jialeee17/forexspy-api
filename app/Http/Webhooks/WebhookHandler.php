@@ -427,7 +427,12 @@ class WebhookHandler extends \DefStudio\Telegraph\Handlers\WebhookHandler
 
     public function handleAccountConnection(string $text)
     {
-        $user = User::where('uuid', $text)->firstOrFail();
+        $user = User::where('uuid', $text)->first();
+
+        if (empty($user)) {
+            throw new Exception(__('telegram.invalid_user_id'));
+        }
+
         $this->chat->user_uuid = $user->uuid;
         $this->chat->save();
 
