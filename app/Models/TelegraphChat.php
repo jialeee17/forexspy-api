@@ -4,7 +4,6 @@ namespace App\Models;
 
 // use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-use App\Models\TelegramUser;
 use App\Models\TelegraphBot;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use DefStudio\Telegraph\Models\TelegraphChat as BaseModel;
@@ -16,6 +15,11 @@ class TelegraphChat extends BaseModel
         'name',
         'telegraph_bot_id',
         'user_uuid',
+        'pending_commands',
+    ];
+
+    protected $casts = [
+        'pending_commands' => 'array',
     ];
 
     /* -------------------------------------------------------------------------- */

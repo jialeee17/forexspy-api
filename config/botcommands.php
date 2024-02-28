@@ -8,14 +8,18 @@ return [
     'main' => [
         'new_user' => 'Register a new user',
     ],
-    'user' => [
+    'users' => [
         'my_id' => 'Retrieve user ID',
         'my_account' => 'Retrieve details about your account',
         'connect' => 'Connect to your ForexSpy account',
     ],
-    'reports' => [
+    'report' => [
         'view_open_trades' => 'Retrieve reports on your recent open trades',
         'view_closed_trades' => 'Retrieve reports on your recent closed trades',
         'view_summary' => 'Get an overview of your account',
+    ],
+    'trades' => [
+        'close_all_trades' => 'Close all active trades',
+        'disable_auto_trading' => 'Disable auto trading feature',
     ],
 ];

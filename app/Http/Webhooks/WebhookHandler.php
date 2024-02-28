@@ -249,6 +249,39 @@ class WebhookHandler extends \DefStudio\Telegraph\Handlers\WebhookHandler
         }
     }
 
+    public function close_all_trades()
+    {
+        // Middlewares
+        $this->ensureUserAccountIsExist();
+
+        $this->queueCommand(__FUNCTION__);
+    }
+
+    public function disable_auto_trading()
+    {
+        // Middlewares
+        $this->ensureUserAccountIsExist();
+        
+        $this->queueCommand(__FUNCTION__);
+    }
+
+    private function queueCommand($command)
+    {
+        $pendingCommands = $this->chat->pending_commands ?? [];
+
+        if (in_array($command, $pendingCommands)) {
+            $this->chat->html("The command '/$command' is already pending processing.")->send();
+            return;
+        }
+
+        $pendingCommands[] = $command;
+
+        $this->chat->pending_commands = $pendingCommands;
+        $this->chat->save();
+
+        $this->chat->html("The command '/$command' has been received and will be processed soon.")->send();
+    }
+
     /* -------------------------------------------------------------------------- */
     /*                                   Actions                                  */
     /* -------------------------------------------------------------------------- */
