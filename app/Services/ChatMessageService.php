@@ -83,7 +83,7 @@ class ChatMessageService
         return str_replace(':name', env('APP_NAME'), __('telegram.connection_exist'));
     }
 
-    public static function pastOpenTrades($trades, $period)
+    public static function recentOpenTrades($trades, $period)
     {
         if ($trades->isNotEmpty()) {
             $message = "<b>📈 Recent Open Trades Summary</b>\n\n";
@@ -94,18 +94,18 @@ class ChatMessageService
                 $openPrice = $trade->open_price;
                 $lots = $trade->lots;
 
-                $message .= "$type $symbol @ $openPrice for $lots " . __('telegram.lots') . "\n";
+                $message .= "$type $symbol ($lots " . __('telegram.lots') . ") @ $openPrice\n";
             }
 
             // $message .= "\n <a href='" . env('APP_URL') . "'><i>" . __('telegram.by') . " " . env('APP_NAME') . "</i></a>";
         } else {
-            $message = __('telegram.trade.new_trade_not_found');
+            $message = str_replace(':hour', $period, __('telegram.recent_open_trades_not_found'));
         }
 
         return $message;
     }
 
-    public static function pastClosedTrades($trades, $period, $currency)
+    public static function recentClosedTrades($trades, $period, $currency)
     {
         if ($trades->isNotEmpty()) {
             $totalProfit = 0;
@@ -135,7 +135,7 @@ class ChatMessageService
             $message .= "\n" . __('telegram.total_profits') . ": $currency $totalProfit\n\n";
                 // . "<a href='" . env('APP_URL') . "'><i>" . __('telegram.by') . " " . env('APP_NAME') . "</i></a>";
         } else {
-            $message = __('telegram.trade.close_trade_not_found');
+            $message = str_replace(':hour', $period, __('telegram.recent_closed_trades_not_found'));
         }
 
         return $message;

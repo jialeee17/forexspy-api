@@ -33,6 +33,8 @@ class WebhookHandler extends \DefStudio\Telegraph\Handlers\WebhookHandler
 
     private $userRepository;
 
+    private $period = 12; // Default time period in hours for viewing past trade history
+
     public function __construct(UserRepository $userRepository)
     {
         $this->userRepository = $userRepository;
@@ -133,19 +135,16 @@ class WebhookHandler extends \DefStudio\Telegraph\Handlers\WebhookHandler
                 })
                 ->send();
         } else {
-            /**
-             * !Reminder: When updating the value of $period, make sure to update the value of $period in 'show_selected_newtrades()' function as well.
-             */
-            $period = 12; // in hours
+            $account = $accounts->first();
+            $period = $this->period ?? 12;
+            $now = Carbon::now();
 
-            $trades = Trade::whereHas('mtAccount', function (Builder $query) use ($accounts) {
-                $query->where('login_id', $accounts->first()->login_id);
-            })
-                ->where('open_at', '>=', Carbon::now()->subHours($period)->toDateTimeString())
+            $trades = Trade::where('account_login_id', $account->login_id)
+                ->where('open_at', '>=', $now->subHours($period)->toDateTimeString())
                 ->open()
                 ->get();
 
-            $this->chat->html(ChatMessageService::pastOpenTrades($trades, $period))->send();
+            $this->chat->html(ChatMessageService::recentOpenTrades($trades, $period))->send();
         }
     }
 
@@ -171,20 +170,17 @@ class WebhookHandler extends \DefStudio\Telegraph\Handlers\WebhookHandler
                 })
                 ->send();
         } else {
-            /**
-             * !Reminder: When updating the value of $period, make sure to update the value of $period in 'show_selected_closedtrades()' function as well.
-             */
-            $period = 12; // in hours
-            $currency = $accounts->first()->currency;
+            $account = $accounts->first();
+            $period = $this->period ?? 12;
+            $currency = $account->currency;
+            $now = Carbon::now();
 
-            $trades = Trade::whereHas('mtAccount', function (Builder $query) use ($accounts) {
-                $query->where('login_id', $accounts->first()->login_id);
-            })
-                ->where('close_at', '>=', Carbon::now()->subHours($period)->toDateTimeString())
+            $trades = Trade::where('account_login_id', $account->login_id)
+                ->where('close_at', '>=', $now->subHours($period)->toDateTimeString())
                 ->closed()
                 ->get();
 
-            $this->chat->html(ChatMessageService::pastClosedTrades($trades, $period, $currency))->send();
+            $this->chat->html(ChatMessageService::recentClosedTrades($trades, $period, $currency))->send();
         }
     }
 
@@ -210,36 +206,26 @@ class WebhookHandler extends \DefStudio\Telegraph\Handlers\WebhookHandler
                 })
                 ->send();
         } else {
-
             $account = $accounts->first();
+            $period = $this->period ?? 12;
+            $now = Carbon::now();
+            $currency = $account->currency;
 
-            /**
-             * !Reminder: When updating the value of $period, make sure to update the value of $period in 'show_selected_summary()' function as well.
-             */
-            $period = 12; // in hours
-
-            // Account Details
-            $this->chat->html(ChatMessageService::accountDetails($account))->send();
-
-            // New Trades
-            $openTrades = Trade::whereHas('mtAccount', function (Builder $query) use ($account) {
-                $query->where('login_id', $account->login_id);
-            })
-                ->where('open_at', '>=', Carbon::now()->subHours($period)->toDateTimeString())
+            // Recent Open Trades
+            $openTrades = Trade::where('account_login_id', $account->login_id)
+                ->where('open_at', '>=', $now->subHours($period)->toDateTimeString())
                 ->open()
                 ->get();
 
-            $this->chat->html(ChatMessageService::pastOpenTrades($openTrades, $period))->send();
-
-            // Closed Trades
-            $closedTrades = Trade::whereHas('mtAccount', function (Builder $query) use ($account) {
-                $query->where('login_id', $account->login_id);
-            })
+            // Recent Closed Trades
+            $closedTrades = Trade::where('account_login_id', $account->login_id)
                 ->where('close_at', '>=', Carbon::now()->subHours($period)->toDateTimeString())
                 ->closed()
                 ->get();
 
-            $this->chat->html(ChatMessageService::pastClosedTrades($closedTrades, $period, $account->currency))->send();
+            $this->chat->html(ChatMessageService::accountDetails($account))->send();
+            $this->chat->html(ChatMessageService::recentOpenTrades($openTrades, $period))->send();
+            $this->chat->html(ChatMessageService::recentClosedTrades($closedTrades, $period, $currency))->send();
         }
     }
 
@@ -289,77 +275,56 @@ class WebhookHandler extends \DefStudio\Telegraph\Handlers\WebhookHandler
     public function view_selected_acc_open_trades()
     {
         $loginId = $this->data->get('login_id');
+        $period = $this->period ?? 12;
+        $now = Carbon::now();
 
-        /**
-         * !Reminder: When updating the value of $period, make sure to update the value of $period in 'newtrades()' function as well.
-         */
-        $period = 12; // in hours
-
-        $trades = Trade::whereHas('mtAccount', function (Builder $query) use ($loginId) {
-            $query->where('login_id', $loginId);
-        })
-            ->where('open_at', '>=', Carbon::now()->subHours($period)->toDateTimeString())
+        $trades = Trade::where('account_login_id', $loginId)
+            ->where('open_at', '>=', $now->subHours($period)->toDateTimeString())
             ->open()
             ->get();
 
-        $this->chat->html(ChatMessageService::pastOpenTrades($trades, $period))->send();
+        $this->chat->html(ChatMessageService::recentOpenTrades($trades, $period))->send();
     }
 
     public function view_selected_acc_closed_trades()
     {
         $loginId = $this->data->get('login_id');
         $account = MTAccount::where('login_id', $loginId)->firstOrFail();
+        $period = $this->period ?? 12;
+        $now = Carbon::now();
+        $currency = $account->currency;
 
-        /**
-         * !Reminder: When updating the value of $period, make sure to update the value of $period in 'closedtrades()' function as well.
-         */
-        $period = 12; // in hours
-
-        $trades = Trade::whereHas('mtAccount', function (Builder $query) use ($loginId) {
-            $query->where('login_id', $loginId);
-        })
-            ->where('close_at', '>=', Carbon::now()->subHours($period)->toDateTimeString())
+        $trades = Trade::where('account_login_id', $loginId)
+            ->where('close_at', '>=', $now->subHours($period)->toDateTimeString())
             ->closed()
             ->get();
 
-        $this->chat->html(ChatMessageService::pastClosedTrades($trades, $period, $account->currency))->send();
+        $this->chat->html(ChatMessageService::recentClosedTrades($trades, $period, $currency))->send();
     }
 
     public function view_selected_acc_summary()
     {
         $loginId = $this->data->get('login_id');
+        $period = $this->period ?? 12;
+        $account = MTAccount::where('login_id', $loginId)->firstOrFail();
+        $now = Carbon::now();
+        $currency = $account->currency;
 
-        /**
-         * !Reminder: When updating the value of $period, make sure to update the value of $period in 'summary()' function as well.
-         */
-        $period = 12; // in hours
-
-        // Account Details
-        $account = MTAccount::where('login_id', $loginId)->first();
-
-        $this->chat->html(ChatMessageService::accountDetails($account))->send();
-
-        // New Trades
-        $period = 12; // in hours
-
-        $openTrades = Trade::whereHas('myAccount', function (Builder $query) use ($loginId) {
-            $query->where('login_id', $loginId);
-        })
-            ->where('open_at', '>=', Carbon::now()->subHours($period)->toDateTimeString())
+        // Recent Open Trades
+        $openTrades = Trade::where('account_login_id', $loginId)
+            ->where('open_at', '>=', $now->subHours($period)->toDateTimeString())
             ->open()
             ->get();
 
-        $this->chat->html(ChatMessageService::pastOpenTrades($openTrades, $period))->send();
-
-        // Closed Trades
-        $closedTrades = Trade::whereHas('myAccount', function (Builder $query) use ($loginId) {
-            $query->where('login_id', $loginId);
-        })
-            ->where('close_at', '>=', Carbon::now()->subHours($period)->toDateTimeString())
+        // Recent Closed Trades
+        $closedTrades = Trade::where('account_login_id', $loginId)
+            ->where('close_at', '>=', $now->subHours($period)->toDateTimeString())
             ->closed()
             ->get();
 
-        $this->chat->html(ChatMessageService::pastClosedTrades($closedTrades, $period, $account->currency))->send();
+        $this->chat->html(ChatMessageService::accountDetails($account))->send();
+        $this->chat->html(ChatMessageService::recentOpenTrades($openTrades, $period))->send();
+        $this->chat->html(ChatMessageService::recentClosedTrades($closedTrades, $period, $currency))->send();
     }
 
     private function handleUserRegistration(int $step, string $text)
@@ -475,6 +440,8 @@ class WebhookHandler extends \DefStudio\Telegraph\Handlers\WebhookHandler
         foreach ($data as $d) {
             $this->chat->storage()->forget($d);
         }
+
+        return true;
     }
 
     /* -------------------------------------------------------------------------- */

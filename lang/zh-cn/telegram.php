@@ -35,11 +35,9 @@ return [
 
     'unknown_command' => "Sorry, the command you entered is invalid. Please make sure you're using a valid command. If you need assistance or have any questions, feel free to type '/help' to see the list of available commands or contact support.",
 
+    'recent_open_trades_not_found' => 'You currently have no open trades within :hour hours.',
+    'recent_closed_trades_not_found' => 'You currently have no closed trades within :hour hours.',
 
-    'trade' => [
-        'new_trade_not_found' => 'There are no new trade records available for your account at the moment. Please check back later.',
-        'close_trade_not_found' => 'There are no closed trade records available for your account at the moment. Please check back later.',
-    ],
     'message' => [
         'feel_free_to_ask' => 'If you need any assistance or have questions, feel free to ask. Happy trading!',
         'new_community' => 'You are now part of ForexSpy\'s community. Stay tuned for exciting updates, market insights, and trading tips!',
