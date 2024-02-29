@@ -135,6 +135,7 @@ class WebhookHandler extends \DefStudio\Telegraph\Handlers\WebhookHandler
                 })
                 ->send();
         } else {
+            // ! Sync view_selected_acc_open_trades() function when updating code here.
             $account = $accounts->first();
             $period = $this->period ?? 12;
             $now = Carbon::now();
@@ -170,6 +171,7 @@ class WebhookHandler extends \DefStudio\Telegraph\Handlers\WebhookHandler
                 })
                 ->send();
         } else {
+            // ! Sync view_selected_acc_closed_trades() function when updating code here.
             $account = $accounts->first();
             $period = $this->period ?? 12;
             $currency = $account->currency;
@@ -206,6 +208,7 @@ class WebhookHandler extends \DefStudio\Telegraph\Handlers\WebhookHandler
                 })
                 ->send();
         } else {
+            // ! Sync view_selected_acc_summary() function when updating code here.
             $account = $accounts->first();
             $period = $this->period ?? 12;
             $now = Carbon::now();
