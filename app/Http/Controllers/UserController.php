@@ -6,6 +6,7 @@ use App\Models\User;
 use Inertia\Inertia;
 use Illuminate\Http\Request;
 use App\Enums\UserStatusesEnum;
+use App\Models\TelegraphBot;
 
 class UserController extends Controller
 {
@@ -21,7 +22,11 @@ class UserController extends Controller
 
     public function settings()
     {
-        return Inertia::render('Profile/Settings');
+        $bot = TelegraphBot::active()->first();
+
+        return Inertia::render('Profile/Settings', [
+            'bot' => $bot
+        ]);
     }
 
     public function toggleStatus(Request $request, User $user)
