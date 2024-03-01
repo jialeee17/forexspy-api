@@ -4,9 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Inertia\Inertia;
+use App\Models\TelegraphBot;
 use Illuminate\Http\Request;
 use App\Enums\UserStatusesEnum;
-use App\Models\TelegraphBot;
 
 class UserController extends Controller
 {
